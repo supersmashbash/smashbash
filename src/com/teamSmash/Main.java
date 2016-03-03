@@ -3,6 +3,7 @@ package com.teamSmash;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -40,6 +41,7 @@ public class Main {
         stmt.setInt(2, eventId);
         return stmt.executeUpdate();
     }
+
 
     public static void main(String[] args) {
 
