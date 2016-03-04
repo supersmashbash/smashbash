@@ -1,0 +1,52 @@
+.inactive {
+  display: none;
+}
+
+nav {
+  background-color: lightgrey;
+  height: 65px;
+  h1 {
+    display: inline-block;
+    float: left;
+    margin: 0;
+    margin-left: 25px;
+    margin-top: 10px;
+  }
+  form  {
+    float: right;
+    margin-right: 30px;
+    margin-top: 19px;
+  }
+}
+.event-container {
+  background-color: grey;
+  width: 75%;
+  margin: 0 auto;
+  height: 500px;
+  padding: 15px;
+  h2 {
+    margin: 0;
+  }
+}
+.user-page {
+  .user-button-container {
+  display: inline-block;
+  float: right;
+  margin-right: 30px;
+  margin-top: 19px;
+  }
+}
+
+.create-event-form {
+  width: 35%;
+  margin: 0 auto;
+  input[type="text"] {
+    display: block;
+    width: 100%;
+  }
+}
+
+footer {
+  background-color: lightgrey;
+  height: 75px;
+}
