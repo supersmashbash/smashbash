@@ -4,10 +4,16 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import spark.ModelAndView;
+import spark.Session;
 import spark.Spark;
+import spark.template.mustache.MustacheTemplateEngine;
 
 public class Main {
+
+    static HashMap<String, Account> allAccounts = new HashMap();
 
     public static void createTables(Connection conn) throws SQLException {
         Statement stmt = conn.createStatement();
@@ -92,8 +98,53 @@ public class Main {
         Spark.get(
                 "/login",
                 ((request, response) -> {
+                    Session session = new Session(request.session());
+                    String name = session.attribute("accountName");
+                    return allAccounts.get(name);
+                    Account account = getAccountFromSession(request.session());
 
+                    HashMap m = new HashMap();
+                    if (account == null) {
+                        return new ModelAndView(m, "login.html");
+                    }
+                    else {
+                        m.put("name", account.getName());
+                        m.put("password", account.getPassword());
+                        m.put("id", account.getId());
+                        m.put("events", account.getEvents());
+                        return new ModelAndView(m, "home.html");
+                    }
+                },
+                new MustacheTemplateEngine()
+        );
+        Spark.post(
+                "/create-user",
+                ((request, response) -> {
+                    Account account = null;
+                    String name = request.queryParams("loginName");
+                    String password = request.queryParams("password");
+                    if (allAccounts.containsKey(name)) {
+                        if (password.equalsIgnoreCase(allAccounts.get(name).getPassword())) {
+                            account = allAccounts.get(name);
+                            response.redirect("/login");
+                        } else {
+                            response.redirect("/login");
+                        }
+                    } else {
+                        account = new Account(name, password);
+                        allAccounts.put(account.getName(), account);
+                        response.redirect("/login");
+                    }
+                    Session session = request.session();
+                    session.attribute("userName", name);
+                    allAccounts.put(account.getName(), account);
+
+                    return "";
                 })
         );
+
+    static Account getAccountFromSession(Session session) {
+        String name = session.attribute("accountName");
+        return allAccounts.get(name);
     }
 }
