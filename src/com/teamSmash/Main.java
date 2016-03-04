@@ -20,12 +20,12 @@ public class Main {
         Statement stmt = conn.createStatement();
         stmt.execute("CREATE TABLE IF NOT EXISTS account (account_id IDENTITY, account_name VARCHAR, account_password VARCHAR)");
         stmt.execute("CREATE TABLE IF NOT EXISTS event (event_id IDENTITY, event_name VARCHAR, event_location VARCHAR, event_time VARCHAR, " +
-                                          "event_date VARCHAR, event_image VARCHAR, event_description VARCHAR)");
+                "event_date VARCHAR, event_image VARCHAR, event_description VARCHAR)");
         stmt.execute("CREATE TABLE IF NOT EXISTS account_event_map (map_id IDENTITY, account_id INT, event_id INT)");
         stmt.close();
     }
 
-    public static int createAccount(Connection conn,String name, String password ) throws SQLException {
+    public static int createAccount(Connection conn, String name, String password) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO account VALUES (NULL, ?, ?)");
         stmt.setString(1, name);
         stmt.setString(2, password);
@@ -34,7 +34,7 @@ public class Main {
     }
 
     public static int createEvent(Connection conn, String name, String location, LocalTime time,
-                                      LocalDate date, String image, String description) throws SQLException {
+                                  LocalDate date, String image, String description) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO event VALUES (NULL, ?, ?, ?, ?, ?, ?)");
         stmt.setString(1, name);
         stmt.setString(2, location);
@@ -75,6 +75,24 @@ public class Main {
 
     }
 
+    public static Account selectAccount(Connection conn, String name) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM account WHERE account_name = ?");
+        stmt.setString(1, name);
+
+        ResultSet result = stmt.executeQuery();
+
+        if (result.next()) {
+            Account account = new Account(result.getInt(1), result.getString(2), result.getString(3));
+            return account;
+        } else {
+            Account account = null;
+            return account;
+        }
+    }
+
+
+
+
     public static Account selectAccount(Connection conn, int id) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM account WHERE account_id = ?");
         stmt.setInt(1, id);
@@ -111,7 +129,7 @@ public class Main {
         return eventList;
     }
 
-    public static Event selectEvent(Connection conn, int id) throws  SQLException {
+    public static Event selectEvent(Connection conn, int id) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE event_id = ?");
         stmt.setInt(1, id);
         ResultSet results = stmt.executeQuery();
@@ -123,19 +141,18 @@ public class Main {
             Date date = results.getDate(5);
             String image = results.getString(6);
             String description = results.getString(7);
-            Event event = new Event(id, name, location,time.toLocalTime(), date.toLocalDate(), image, description);
+            Event event = new Event(id, name, location, time.toLocalTime(), date.toLocalDate(), image, description);
 
             return event;
-        }
-        else {
+        } else {
             return null;
         }
     }
 
-    public static void editEvent(Connection conn, int id, String name, String location,LocalTime time, LocalDate date, String image, String description) throws SQLException {
+    public static void editEvent(Connection conn, int id, String name, String location, LocalTime time, LocalDate date, String image, String description) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("UPDATE event SET event_name = ?, event_location = ?, " +
-                                                        "event_time = ?, event_date = ?, event_image = ?, event_description = ? " +
-                                                        "WHERE event_id = ?");
+                "event_time = ?, event_date = ?, event_image = ?, event_description = ? " +
+                "WHERE event_id = ?");
         stmt.setString(1, name);
         stmt.setString(2, location);
         stmt.setTime(3, Time.valueOf(time));
@@ -146,7 +163,18 @@ public class Main {
         stmt.execute();
     }
 
+    public static int getAccountId(Connection conn, String name) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT account_id FROM account WHERE account_name = ?");
+        stmt.setString(1, name);
+        ResultSet results = stmt.executeQuery();
 
+        int accountId = 0;
+        while (results.next()) {
+            accountId = results.getInt(1);
+        }
+
+        return accountId;
+    }
 
 
     public static void main(String[] args) throws SQLException {
@@ -167,12 +195,107 @@ public class Main {
                     return s.serialize(selectAccounts(conn));
                 })
         );
-        Spark.get(
+        Spark.post(
                 "/events",
                 ((request, response) -> {
                     JsonSerializer s = new JsonSerializer();
                     return s.serialize(selectEvents(conn));
                 })
         );
+
+        Spark.post(
+                "/create-user",
+                ((request, response) -> {
+                    String name = request.queryParams("create-user-login");
+                    String password = request.queryParams("create-user-password");
+
+                    int affected = createAccount(conn, name, password);
+
+                    HashMap<Integer, String> accountMap = new HashMap<>();
+
+                    if (affected == 1) {
+                        accountMap.put(getAccountId(conn,name), name);
+                    }
+
+                    JsonSerializer serializer = new JsonSerializer();
+                    return serializer.serialize(accountMap);
+                })
+        );
+
+        Spark.post(
+                "/login",
+                ((request, response) -> {
+                    String name = request.queryParams("user-login");
+                    String password = request.queryParams("user-password");
+
+                    JsonSerializer serializer = new JsonSerializer();
+
+                    HashMap<Integer, String> accountMap = new HashMap<>();
+
+                    Account account = selectAccount(conn, name);
+
+                    if ( (account != null) && (password.equals(account.getPassword())) ) {  //if exist and the pass matches
+                        accountMap.put(getAccountId(conn,name), name);
+                        return serializer.serialize(accountMap);
+                    } else if (account == null) {   //if the user does not yet exist
+
+                        return serializer.serialize("No account created");
+                    } else {
+                        return serializer.serialize("Password mismatch");
+                    }
+                })
+        );
+
+
+//                ((request, response) -> {
+//                    Session session = request.session();
+//                    String name = session.attribute("accountName");
+//                    return allAccounts.get(name);
+//                    Account account = getAccountFromSession(request.session());
+//
+//                    HashMap m = new HashMap();
+//                    if (account == null) {
+//                        return new ModelAndView(m, "login.html");
+//                    }
+//                    else {
+//                        m.put("name", account.getName());
+//                        m.put("password", account.getPassword());
+//                        m.put("id", account.getId());
+//                        m.put("events", account.getEvents());
+//                        return new ModelAndView(m, "home.html");
+//                    }
+//                }
+//
+//        );
+//        Spark.post(
+//                "/create-user",
+//                ((request, response) -> {
+//                    Account account = null;
+//                    String name = request.queryParams("loginName");
+//                    String password = request.queryParams("password");
+//                    if (allAccounts.containsKey(name)) {
+//                        if (password.equalsIgnoreCase(allAccounts.get(name).getPassword())) {
+//                            account = allAccounts.get(name);
+//                            response.redirect("/login");
+//                        } else {
+//                            response.redirect("/login");
+//                        }
+//                    } else {
+//                        account = new Account(name, password);
+//                        allAccounts.put(account.getName(), account);
+//                        response.redirect("/login");
+//                    }
+//                    Session session = request.session();
+//                    session.attribute("userName", name);
+//                    allAccounts.put(account.getName(), account);
+//
+//                    return "";
+//                })
+//        );
+//
+//    static Account getAccountFromSession(Session session) {
+//        String name = session.attribute("accountName");
+//        return allAccounts.get(name);
+//    }
     }
 }
