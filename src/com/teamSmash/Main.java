@@ -90,9 +90,6 @@ public class Main {
         }
     }
 
-
-
-
     public static Account selectAccount(Connection conn, int id) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM account WHERE account_id = ?");
         stmt.setInt(1, id);
@@ -195,7 +192,7 @@ public class Main {
                     return s.serialize(selectAccounts(conn));
                 })
         );
-        Spark.post(
+        Spark.get(
                 "/events",
                 ((request, response) -> {
                     JsonSerializer s = new JsonSerializer();
@@ -206,37 +203,36 @@ public class Main {
         Spark.post(
                 "/create-user",
                 ((request, response) -> {
-                    String name = request.queryParams("create-user-login");
-                    String password = request.queryParams("create-user-password");
+                    String name = request.queryParams("username");
+                    String password = request.queryParams("password");
+
+                    JsonSerializer serializer = new JsonSerializer();
 
                     int affected = createAccount(conn, name, password);
 
-                    HashMap<Integer, String> accountMap = new HashMap<>();
-
                     if (affected == 1) {
-                        accountMap.put(getAccountId(conn,name), name);
+                        int id = getAccountId(conn, name);
+                        return serializer.serialize(selectAccount(conn, id));
                     }
 
-                    JsonSerializer serializer = new JsonSerializer();
-                    return serializer.serialize(accountMap);
+
+                    return serializer.serialize("Something bad has happened");
                 })
         );
 
         Spark.post(
                 "/login",
                 ((request, response) -> {
-                    String name = request.queryParams("user-login");
-                    String password = request.queryParams("user-password");
+                    String name = request.queryParams("username");
+                    String password = request.queryParams("password");
 
                     JsonSerializer serializer = new JsonSerializer();
-
-                    HashMap<Integer, String> accountMap = new HashMap<>();
 
                     Account account = selectAccount(conn, name);
 
                     if ( (account != null) && (password.equals(account.getPassword())) ) {  //if exist and the pass matches
-                        accountMap.put(getAccountId(conn,name), name);
-                        return serializer.serialize(accountMap);
+                        int id = getAccountId(conn, name);
+                        return serializer.serialize(selectAccount(conn, id));
                     } else if (account == null) {   //if the user does not yet exist
 
                         return serializer.serialize("No account created");
