@@ -73,14 +73,41 @@ public class MainTest {
     @Test
     public void testSelectAccount() throws SQLException {
         Connection conn = startConnection();
-
         Main.createAccount(conn, "bob", "bobby");
         Main.createAccount(conn, "Sal", "Amander");
-
         Account a = Main.selectAccount(conn, 1);
         endConnection(conn);
 
         assertTrue(a.getName().equals("bob"));
+    }
+
+    @Test
+    public void testSelectEvents() throws SQLException {
+        Connection conn = startConnection();
+        Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip");
+        Main.createEvent(conn, "event2", "place2", LocalTime.now(), LocalDate.now(), "image2", "descrip2");
+        ArrayList<Event> eventList = Main.selectEvents(conn);
+
+        assertTrue(eventList.size() == 2);
+    }
+
+    @Test
+    public void testSelectEvent() throws SQLException {
+        Connection conn = startConnection();
+        Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip");
+        Account account = Main.selectAccount(conn, 1);
+
+        assertTrue(account == null);
+    }
+
+    @Test
+    public void testEditEvent() throws SQLException {
+        Connection conn = startConnection();
+        Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip");
+        Main.editEvent(conn, 1, "eventEdit", "place", LocalTime.now(), LocalDate.now(), "image", "descrip");
+        Event event = Main.selectEvent(conn, 1);
+
+        assertTrue(event.getName().equals("eventEdit"));
     }
 
 
