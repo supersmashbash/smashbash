@@ -1,6 +1,7 @@
 package com.teamSmash;
 
 import org.junit.Test;
+import spark.Session;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -98,6 +99,11 @@ public class MainTest {
         Event event = Main.selectEvent(conn, 1);
 
         assertTrue(event != null);
+    }
+
+    @Test
+    public void testLogOut() throws SQLException {
+
     }
 
     @Test
