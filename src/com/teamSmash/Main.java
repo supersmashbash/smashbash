@@ -1,11 +1,18 @@
 package com.teamSmash;
 
+import spark.Spark;
+
 public class Main {
 
+
     public static void main(String[] args) {
+        Spark.init();
 
-        //little change.
+        Spark.get(
+                "/login",
+                ((request, response) -> {
 
-
+                })
+        );
     }
 }
