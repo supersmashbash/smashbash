@@ -227,6 +227,15 @@ public class Main {
                 })
         );
 
+        Spark.post(
+                "/logout",
+                ((request, response) -> {
+                    Session session = request.session();
+                    session.invalidate();
+                    return "";
+                })
+        );
+
 
 //                ((request, response) -> {
 //                    Session session = request.session();
