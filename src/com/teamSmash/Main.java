@@ -1,6 +1,7 @@
 package com.teamSmash;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -11,9 +12,9 @@ import spark.ModelAndView;
 import spark.Session;
 import spark.Spark;
 import spark.template.mustache.MustacheTemplateEngine;
+import java.util.*;
 
 public class Main {
-
 
     public static void createTables(Connection conn) throws SQLException {
         Statement stmt = conn.createStatement();
@@ -37,8 +38,8 @@ public class Main {
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO event VALUES (NULL, ?, ?, ?, ?, ?, ?)");
         stmt.setString(1, name);
         stmt.setString(2, location);
-        stmt.setString(3, time.toString());
-        stmt.setString(4, date.toString());
+        stmt.setTime(3, (Time.valueOf(time)));  //here I am needing to convert a LocalTime object into a Time object with the DB will accept more freely. I think.
+        stmt.setDate(4, Date.valueOf(date));  //same here but for Date.
         stmt.setString(5, image);
         stmt.setString(6, description);
 
@@ -62,9 +63,9 @@ public class Main {
         ArrayList<Account> accountList = new ArrayList<>();
 
         while (results.next()) {
-            int id = results.getInt("account_id");
-            String name = results.getString("account_name");
-            String password = results.getString("account_password");
+            int id = results.getInt(1);
+            String name = results.getString(2);
+            String password = results.getString(3);
             Account a = new Account(id, name, password);
             accountList.add(a);
         }
@@ -88,6 +89,63 @@ public class Main {
             return account;
         }
     }
+
+    public static ArrayList<Event> selectEvents(Connection conn) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event");
+        ResultSet results = stmt.executeQuery();
+
+        ArrayList<Event> eventList = new ArrayList<>();
+
+        while (results.next()) {
+            int id = results.getInt(1);
+            String name = results.getString(2);
+            String location = results.getString(3);
+            Time time = results.getTime(4);
+            Date date = results.getDate(5);
+            String image = results.getString(6);
+            String description = results.getString(7);
+            Event event = new Event(id, name, location, time.toLocalTime(), date.toLocalDate(), image, description);
+
+            eventList.add(event);
+        }
+        return eventList;
+    }
+
+    public static Event selectEvent(Connection conn, int id) throws  SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE event_id = ?");
+        stmt.setInt(1, id);
+        ResultSet results = stmt.executeQuery();
+
+        if (results.next()) {
+            String name = results.getString(2);
+            String location = results.getString(3);
+            Time time = results.getTime(4);
+            Date date = results.getDate(5);
+            String image = results.getString(6);
+            String description = results.getString(7);
+            Event event = new Event(id, name, location,time.toLocalTime(), date.toLocalDate(), image, description);
+
+            return event;
+        }
+        else {
+            return null;
+        }
+    }
+
+    public static void editEvent(Connection conn, int id, String name, String location,LocalTime time, LocalDate date, String image, String description) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("UPDATE event SET event_name = ?, event_location = ?, " +
+                                                        "event_time = ?, event_date = ?, event_image = ?, event_description = ? " +
+                                                        "WHERE event_id = ?");
+        stmt.setString(1, name);
+        stmt.setString(2, location);
+        stmt.setTime(3, Time.valueOf(time));
+        stmt.setDate(4, Date.valueOf(date));
+        stmt.setString(5, image);
+        stmt.setString(6, description);
+        stmt.setInt(7, id);
+        stmt.execute();
+    }
+
 
 
 
