@@ -167,61 +167,12 @@ public class Main {
                     return s.serialize(selectAccounts(conn));
                 })
         );
-        Spark.post(
+        Spark.get(
                 "/events",
                 ((request, response) -> {
                     JsonSerializer s = new JsonSerializer();
-                    return s.serialize()
-            })
+                    return s.serialize(selectEvents(conn));
+                })
         );
-//                ((request, response) -> {
-//                    Session session = request.session();
-//                    String name = session.attribute("accountName");
-//                    return allAccounts.get(name);
-//                    Account account = getAccountFromSession(request.session());
-//
-//                    HashMap m = new HashMap();
-//                    if (account == null) {
-//                        return new ModelAndView(m, "login.html");
-//                    }
-//                    else {
-//                        m.put("name", account.getName());
-//                        m.put("password", account.getPassword());
-//                        m.put("id", account.getId());
-//                        m.put("events", account.getEvents());
-//                        return new ModelAndView(m, "home.html");
-//                    }
-//                }
-//
-//        );
-//        Spark.post(
-//                "/create-user",
-//                ((request, response) -> {
-//                    Account account = null;
-//                    String name = request.queryParams("loginName");
-//                    String password = request.queryParams("password");
-//                    if (allAccounts.containsKey(name)) {
-//                        if (password.equalsIgnoreCase(allAccounts.get(name).getPassword())) {
-//                            account = allAccounts.get(name);
-//                            response.redirect("/login");
-//                        } else {
-//                            response.redirect("/login");
-//                        }
-//                    } else {
-//                        account = new Account(name, password);
-//                        allAccounts.put(account.getName(), account);
-//                        response.redirect("/login");
-//                    }
-//                    Session session = request.session();
-//                    session.attribute("userName", name);
-//                    allAccounts.put(account.getName(), account);
-//
-//                    return "";
-//                })
-//        );
-//
-//    static Account getAccountFromSession(Session session) {
-//        String name = session.attribute("accountName");
-//        return allAccounts.get(name);
-//    }
+    }
 }
