@@ -95,9 +95,9 @@ public class MainTest {
     public void testSelectEvent() throws SQLException {
         Connection conn = startConnection();
         Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip");
-        Account account = Main.selectAccount(conn, 1);
+        Event event = Main.selectEvent(conn, 1);
 
-        assertTrue(account != null);
+        assertTrue(event != null);
     }
 
     @Test
