@@ -4,6 +4,14 @@ import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import jodd.json.JsonSerializer;
+import spark.ModelAndView;
+import spark.Session;
+import spark.Spark;
+import spark.template.mustache.MustacheTemplateEngine;
 import java.util.*;
 
 public class Main {
@@ -140,8 +148,80 @@ public class Main {
 
 
 
-    public static void main(String[] args) {
+
+    public static void main(String[] args) throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:h2:./main");
+        createTables(conn);
+        createEvent(conn, "event1", "folly beach", LocalTime.now(), LocalDate.now(), "https://www.google.com/search?q=beach+party&espv=2&biw=1366&bih=597&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjJzpTur6fLAhXF7iYKHS3-AywQ_AUIBigB#imgrc=NeFWZwo9gu3qVM%3A", "beach party");
+
+        Spark.externalStaticFileLocation("public");
 
 
-    }
+        Spark.init();
+
+
+        Spark.get(
+                "/login",
+                ((request, response) -> {
+                    JsonSerializer s = new JsonSerializer();
+                    return s.serialize(selectAccounts(conn));
+                })
+        );
+        Spark.post(
+                "/events",
+                ((request, response) -> {
+                    JsonSerializer s = new JsonSerializer();
+                    return s.serialize()
+            })
+        );
+//                ((request, response) -> {
+//                    Session session = request.session();
+//                    String name = session.attribute("accountName");
+//                    return allAccounts.get(name);
+//                    Account account = getAccountFromSession(request.session());
+//
+//                    HashMap m = new HashMap();
+//                    if (account == null) {
+//                        return new ModelAndView(m, "login.html");
+//                    }
+//                    else {
+//                        m.put("name", account.getName());
+//                        m.put("password", account.getPassword());
+//                        m.put("id", account.getId());
+//                        m.put("events", account.getEvents());
+//                        return new ModelAndView(m, "home.html");
+//                    }
+//                }
+//
+//        );
+//        Spark.post(
+//                "/create-user",
+//                ((request, response) -> {
+//                    Account account = null;
+//                    String name = request.queryParams("loginName");
+//                    String password = request.queryParams("password");
+//                    if (allAccounts.containsKey(name)) {
+//                        if (password.equalsIgnoreCase(allAccounts.get(name).getPassword())) {
+//                            account = allAccounts.get(name);
+//                            response.redirect("/login");
+//                        } else {
+//                            response.redirect("/login");
+//                        }
+//                    } else {
+//                        account = new Account(name, password);
+//                        allAccounts.put(account.getName(), account);
+//                        response.redirect("/login");
+//                    }
+//                    Session session = request.session();
+//                    session.attribute("userName", name);
+//                    allAccounts.put(account.getName(), account);
+//
+//                    return "";
+//                })
+//        );
+//
+//    static Account getAccountFromSession(Session session) {
+//        String name = session.attribute("accountName");
+//        return allAccounts.get(name);
+//    }
 }
