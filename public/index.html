@@ -13,7 +13,7 @@
     <form>
       <input type="text" name="user-login" value="" placeholder="username">
       <input type="text" name="user-password" value="" placeholder="password">
-      <input type="button" name="sign-in-button" value="sign-in">
+      <input type="button" name="sign-in-button" value="sign-in" class = "sign-in-button">
     </form>
   </nav>
   <div class="event-container">
@@ -26,6 +26,7 @@
     <div class="user-button-container">
       <input type="button" name="my-events-button" value="my events">
       <input type="button" name="new-events-button" value="create events">
+        <input type="button" name="sign-out-button" value="sign-out">
     </div>
   </nav>
   <div class="event-container">
@@ -33,20 +34,22 @@
 
 </section>
 <section class= "user-events-container inactive">
+    <input type="button" name="sign-out-button" value="sign-out">
   <div class="saved-events">
 
   </div>
   <div class="created-events">
 
   </div>
-
 </section>
 <section class="post-event-container inactive">
   <nav>
     <h1>Post New Events</h1>
+    <input type="button" name="sign-out-button" value="sign-out">
   </nav>
   <form class="create-event-form">
       <input type="text" name="eventName" value="" placeholder="Enter Event Name">
+      <input type="text" name="eventLocation" value="" placeholder="Enter Location">
       <input type="text" name="timeOfEvent" value="" placeholder="Enter Time">
       <input type="text" name="dateOfEvent" value="" placeholder="Enter Date">
       <input type="text" name="descripOfEvent" value="" placeholder="Enter Description">
@@ -54,5 +57,8 @@
   </form>
 </section>
 <!-- <footer></footer> -->
+<script src="bower_components/jquery/dist/jquery.js" charset="utf-8"></script>
+<script src="bower_components/underscore/underscore.js" charset="utf-8"></script>
+<script src="app.js" charset="utf-8"></script>
 </body>
 </html>
