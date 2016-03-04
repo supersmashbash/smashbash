@@ -173,7 +173,6 @@ public class Main {
         return accountId;
     }
 
-
     public static void main(String[] args) throws SQLException {
         Connection conn = DriverManager.getConnection("jdbc:h2:./main");
         createTables(conn);
@@ -181,10 +180,9 @@ public class Main {
 
         Spark.externalStaticFileLocation("public");
 
-
         Spark.init();
 
-
+        //remember to remove this once everything is functioning.
         Spark.get(
                 "/login",
                 ((request, response) -> {
@@ -201,43 +199,30 @@ public class Main {
         );
 
         Spark.post(
-                "/create-user",
-                ((request, response) -> {
-                    String name = request.queryParams("username");
-                    String password = request.queryParams("password");
-
-                    JsonSerializer serializer = new JsonSerializer();
-
-                    int affected = createAccount(conn, name, password);
-
-                    if (affected == 1) {
-                        int id = getAccountId(conn, name);
-                        return serializer.serialize(selectAccount(conn, id));
-                    }
-
-
-                    return serializer.serialize("Something bad has happened");
-                })
-        );
-
-        Spark.post(
                 "/login",
                 ((request, response) -> {
+                    //get user input
                     String name = request.queryParams("username");
                     String password = request.queryParams("password");
+                    //grab account from DB by name if it exists (null if not)
+                    Account account = selectAccount(conn, name);
 
                     JsonSerializer serializer = new JsonSerializer();
 
-                    Account account = selectAccount(conn, name);
+                    //create a session
+                    Session session = request.session();
 
                     if ( (account != null) && (password.equals(account.getPassword())) ) {  //if exist and the pass matches
                         int id = getAccountId(conn, name);
+                        session.attribute("userName", name);
                         return serializer.serialize(selectAccount(conn, id));
-                    } else if (account == null) {   //if the user does not yet exist
-
-                        return serializer.serialize("No account created");
+                    } else if (account == null) {   //if the user does not yet exist, create it
+                        createAccount(conn, name, password);
+                        int id = getAccountId(conn, name);
+                        session.attribute("userName", name);
+                        return serializer.serialize(selectAccount(conn, id));
                     } else {
-                        return serializer.serialize("Password mismatch");
+                        return "Password mismatch";
                     }
                 })
         );
@@ -272,14 +257,11 @@ public class Main {
 //                    if (allAccounts.containsKey(name)) {
 //                        if (password.equalsIgnoreCase(allAccounts.get(name).getPassword())) {
 //                            account = allAccounts.get(name);
-//                            response.redirect("/login");
 //                        } else {
-//                            response.redirect("/login");
 //                        }
 //                    } else {
 //                        account = new Account(name, password);
 //                        allAccounts.put(account.getName(), account);
-//                        response.redirect("/login");
 //                    }
 //                    Session session = request.session();
 //                    session.attribute("userName", name);
