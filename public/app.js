@@ -12,28 +12,24 @@ var page = {
 
   },
   events: function() {
-    $('.sign-in-button').on('click', page.storingUserName);
-},
+    $('.create-button').on('click', page.storingUserName);
+    $('.sign-in-button').on('click', page.checkingUserName);
+  },
+
+  //CREATE USERNAME AND PASSWORD
 
   getUserFromDom: function() {
-    var username = $('input[name="user-login"]').val();
+    var username = $('input[name="create-user-login"]').val();
     return username;
   },
 
-  getUserNameFromStorage: function() {
-    return localStorage.getItem('username');
-  },
-
   getPasswordFromDom: function () {
-    var password = $('input[name="user-password"]').val();
-    return password;
+      var password = $('input[name="create-user-password"]').val();
+      return password;
   },
 
-  getPasswordFromStorage: function() {
-    return localStorage.getItem('password');
-  },
 
-  storingUserName: function() {
+  storingUserName: function() { //storing username & password in Server
     event.preventDefault();
     var newUserName = page.getUserFromDom();
     var newPassword = page.getPasswordFromDom();
@@ -41,10 +37,8 @@ var page = {
       alert("Type in your username and password!");
     }
     else {
-      localStorage.setItem('username', newUserName);
-      localStorage.setItem('password', newPassword);
       page.hideUserPage();
-      page.addUserPassToServer(page.getPasswordToStorage());
+      page.addNewUserPassToServer(page.getPasswordToStorage());
     }
   },
 
@@ -54,17 +48,17 @@ var page = {
   },
 
   getPasswordToStorage: function (){
-    var username = page.getUserNameFromStorage ();
-    var password = page.getPasswordFromStorage ();
+    var username = page.getUserFromDom ();
+    var password = page.getPasswordFromDom ();
     return {
       username: username,
       password: password
-    }
+    };
   },
 
   // AJAX
 
-  addUserPassToServer: function(usernameInput) {
+  addNewUserPassToServer: function(usernameInput) {
     $.ajax({
       url: page.url,
       method: 'POST',
@@ -76,5 +70,58 @@ var page = {
         console.log ("error", err);
       }
     });
-  }
-}
+  },
+
+  //LOGGING IN
+
+  logIn: function () {
+  },
+  getPrevUserPassFromDom: function() {
+      var username = $('input[name="user-login"]').val();
+      return username;
+    },
+
+  getPrevPasswordFromDom: function () {
+        var password = $('input[name="user-password"]').val();
+        return password;
+  },
+
+  checkUserPass: function (){
+    var username = page.getPrevUserPassFromDom ();
+    var password = page.getPrevPasswordFromDom ();
+    return {
+      username: username,
+      password: password
+    };
+  },
+
+  checkingUserName: function() { //storing username & password in Server
+    event.preventDefault();
+    var prevUserName = page.getPrevUserPassFromDom();
+    var prevPassword = page.getPrevPasswordFromDom();
+    if (prevUserName === "" && prevPassword  === ""){
+      alert("Type in your username and password!");
+    }
+    else {
+      page.hideUserPage();
+      page.sendUserPass(page.checkUserPass());
+    }
+  },
+
+
+  //AJAX
+  sendUserPass: function (usernameInput) {
+    $.ajax({
+      url: page.url,
+      method: 'POST',
+      data: usernameInput,
+      success: function () {
+        page.checkUserPass();
+      },
+      error: function (err) {
+        console.log ("error", err);
+      }
+    });
+  },
+
+}; //end of page init
