@@ -76,7 +76,7 @@ public class Main {
     }
 
     public static Account selectAccount(Connection conn, String name) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM account WHERE name = ?");
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM account WHERE account_name = ?");
         stmt.setString(1, name);
 
         ResultSet result = stmt.executeQuery();
@@ -228,17 +228,20 @@ public class Main {
                     String name = request.queryParams("user-login");
                     String password = request.queryParams("user-password");
 
+                    JsonSerializer serializer = new JsonSerializer();
+
                     HashMap<Integer, String> accountMap = new HashMap<>();
 
                     Account account = selectAccount(conn, name);
 
-                    if ((name != null) && (password != null) && (account != null) && (password.equals(account.getPassword())) ) {  //if exist and the pass matches
-                        return accountMap.put(getAccountId(conn,name), name);
+                    if ( (account != null) && (password.equals(account.getPassword())) ) {  //if exist and the pass matches
+                        accountMap.put(getAccountId(conn,name), name);
+                        return serializer.serialize(accountMap);
                     } else if (account == null) {   //if the user does not yet exist
 
-                        return "No account created";
+                        return serializer.serialize("No account created");
                     } else {
-                        return "Password mismatch";
+                        return serializer.serialize("Password mismatch");
                     }
                 })
         );
