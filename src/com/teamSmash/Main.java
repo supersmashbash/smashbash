@@ -20,6 +20,7 @@ public class Main {
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO account VALUES (NULL, ?, ?)");
         stmt.setString(1, name);
         stmt.setString(2, password);
+
         return stmt.executeUpdate();
     }
 
@@ -32,14 +33,52 @@ public class Main {
         stmt.setString(4, date.toString());
         stmt.setString(5, image);
         stmt.setString(6, description);
+
         return stmt.executeUpdate();
     }
 
+    //this is the table we will use to populate lists of all events being attending by a user
+    //as well as all users going to an event
     public static int mapUserToEvent(Connection conn, int accountId, int eventId) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO account_event_map VALUES(NULL, ?, ?)");
         stmt.setInt(1, accountId);
         stmt.setInt(2, eventId);
+
         return stmt.executeUpdate();
+    }
+
+    public static ArrayList<Account> selectAccounts(Connection conn) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM account");
+        ResultSet results = stmt.executeQuery();
+
+        ArrayList<Account> accountList = new ArrayList<>();
+
+        while (results.next()) {
+            int id = results.getInt("account_id");
+            String name = results.getString("account_name");
+            String password = results.getString("account_password");
+            Account a = new Account(id, name, password);
+            accountList.add(a);
+        }
+
+        stmt.close();
+        return accountList;
+
+    }
+
+    public static Account selectAccount(Connection conn, int id) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM account WHERE account_id = ?");
+        stmt.setInt(1, id);
+
+        ResultSet result = stmt.executeQuery();
+
+        if (result.next()) {
+            Account account = new Account(result.getInt(1), result.getString(2), result.getString(3));
+            return account;
+        } else {
+            Account account = null;
+            return account;
+        }
     }
 
 

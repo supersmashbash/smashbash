@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -35,8 +36,9 @@ public class MainTest {
     public void testCreateAccount() throws SQLException {
         Connection conn = startConnection();
         int affected = Main.createAccount(conn, "bob", "bobby");
+        Main.createAccount(conn, "Sal", "Amander");
         endConnection(conn);
-        assert (affected == 1);
+        assertTrue(affected == 1);
     }
 
     @Test
@@ -44,7 +46,7 @@ public class MainTest {
         Connection conn = startConnection();
         int affected = Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip");
         endConnection(conn);
-        assert (affected == 1);
+        assertTrue(affected == 1);
     }
 
     @Test
@@ -52,7 +54,34 @@ public class MainTest {
         Connection connection = startConnection();
         int affected = Main.mapUserToEvent(connection, 1, 1);
         endConnection(connection);
-        assert (affected == 1);
+        assertTrue(affected == 1);
     }
+
+    @Test
+    public void testSelectAccounts() throws SQLException {
+        Connection conn = startConnection();
+
+        Main.createAccount(conn, "bob", "bobby");
+        Main.createAccount(conn, "Sal", "Amander");
+
+        ArrayList<Account> accountList = Main.selectAccounts(conn);
+        endConnection(conn);
+
+        assertTrue(!accountList.isEmpty());
+    }
+
+    @Test
+    public void testSelectAccount() throws SQLException {
+        Connection conn = startConnection();
+
+        Main.createAccount(conn, "bob", "bobby");
+        Main.createAccount(conn, "Sal", "Amander");
+
+        Account a = Main.selectAccount(conn, 1);
+        endConnection(conn);
+
+        assertTrue(a.getName().equals("bob"));
+    }
+
 
 }

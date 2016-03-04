@@ -8,10 +8,11 @@ public class Account {
     private String name, password;
     private int id;
 
-    public Account(String name, String password, int id) {
+    public Account( int id, String name, String password) {
+        setId(id);
         setName(name);
         setPassword(password);
-        setId(id);
+
     }
 
     public String getName() {
