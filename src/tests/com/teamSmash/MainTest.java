@@ -97,7 +97,7 @@ public class MainTest {
         Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip");
         Account account = Main.selectAccount(conn, 1);
 
-        assertTrue(account == null);
+        assertTrue(account != null);
     }
 
     @Test
@@ -110,5 +110,27 @@ public class MainTest {
         assertTrue(event.getName().equals("eventEdit"));
     }
 
+
+    @Test
+    public void testGetAccountById() throws SQLException {
+        Connection conn = startConnection();
+
+        Main.createAccount(conn, "bob", "bobby");
+
+        int id = Main.getAccountId(conn, "bob");
+
+        assertTrue(id == 1);
+    }
+
+    @Test
+    public void testSelectAccountByName() throws SQLException {
+        Connection conn = startConnection();
+
+        Main.createAccount(conn, "bob", "bobby");
+
+        Account account = Main.selectAccount(conn, "bob");
+
+        assertTrue(account.getName().equals("bob"));
+    }
 
 }
