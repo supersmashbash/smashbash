@@ -1,7 +1,5 @@
 package com.teamSmash;
 
-import java.time.LocalDate;
-
 /**
  * Created by branden on 3/3/16 at 18:56.
  */
@@ -9,12 +7,12 @@ public class Event {
 
     private String name, location, image, description;
     private String time;
-    private LocalDate date;
+    private String date;
     private int id;
     private int eventOwner;
 
 
-    public Event(int id, String name, String location, String time, LocalDate date, String image, String description, int eventOwner) {
+    public Event(int id, String name, String location, String time, String date, String image, String description, int eventOwner) {
 
         setId(id);
         setName(name);
@@ -66,11 +64,11 @@ public class Event {
         this.time = time;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
