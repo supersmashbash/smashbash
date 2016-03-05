@@ -179,7 +179,7 @@ public class Main {
         stmt.execute();
     }
 
-    //once i know this works i can take some of the SQL out. I'm currently gettin gmore fields than i actually need.
+    //once i know this works i can take some of the SQL out. I'm currently getting more fields than i actually need.
     //this method will take a account ID number and it will return an arraylist of all of the events they are attending
     // (in a special class made for that purpose)
     public static ArrayList<AccountEvents> getAccountEvents(Connection conn, int accountId) throws SQLException {
@@ -303,6 +303,38 @@ public class Main {
                     }
                 })
         );
+        Spark.post(
+                "/createEvent",
+                ((request, response) -> {
+                    Session session = request.session();
+
+                    String userName = session.attribute("userName");
+                    int userId = getAccountId(conn, userName);
+
+                    String name = request.queryParams("eventName");
+                    String location = request.queryParams("eventLocation");
+                    LocalTime time = LocalTime.parse(request.queryParams("time"));
+                    LocalDate date = LocalDate.parse(request.queryParams("date"));
+                    String image = request.queryParams("image");
+                    String description = request.queryParams("description");
+                    createEvent(conn, name, location, time, date, image, description, userId);
+                    return "";
+                })
+        );
+        Spark.post(
+
+        )
+
+//        Spark.post(
+//                "/create-message",
+//                ((request, response) -> {
+//                    String text = request.queryParams("newMessage");
+//                    Message message = new Message(text);
+//                    getUserFromSession(request.session()).getMessages().add(message);
+//                    response.redirect("/");
+//                    return "";
+//                })
+//        );
 
         Spark.post(
                 "/logout",
