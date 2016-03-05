@@ -1,6 +1,7 @@
 package com.teamSmash;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by branden on 3/3/16 at 18:55.
@@ -9,7 +10,7 @@ public class Account {
 
     private String name, password;
     private int id;
-    private ArrayList<Event> events = new ArrayList<>();
+    private ArrayList<HashMap<Integer, String>> events = new ArrayList<>();
 
     public Account( int id, String name, String password) {
         setId(id);
@@ -47,11 +48,11 @@ public class Account {
         this.id = id;
     }
 
-    public ArrayList<Event> getEvents() {
+    public ArrayList<HashMap<Integer, String>> getEvents() {
         return events;
     }
 
-    public void setEvents(ArrayList<Event> events) {
+    public void setEvents(ArrayList<HashMap<Integer, String>> events) {
         this.events = events;
     }
 }
