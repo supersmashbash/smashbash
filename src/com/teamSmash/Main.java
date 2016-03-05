@@ -226,6 +226,28 @@ public class Main {
                     }
                 })
         );
+        Spark.post(
+                "/create-event",
+                ((request, response) -> {
+                    String name = request.queryParams("eventName");
+                    String location = request.queryParams("eventLocation");
+                    LocalTime time = LocalTime.parse(request.queryParams("time"));
+                    LocalDate date = LocalDate.parse(request.queryParams("date"));
+                    String image = request.queryParams("image");
+                    String description = request.queryParams("description");
+
+                })
+        );
+//        Spark.post(
+//                "/create-message",
+//                ((request, response) -> {
+//                    String text = request.queryParams("newMessage");
+//                    Message message = new Message(text);
+//                    getUserFromSession(request.session()).getMessages().add(message);
+//                    response.redirect("/");
+//                    return "";
+//                })
+//        );
 
 
 //                ((request, response) -> {
