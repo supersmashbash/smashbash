@@ -28,7 +28,7 @@ var page = {
     $('.my-events-button').on('click', page.getStoredEvents); //showing 'my events
     $('.back-button-user').on('click', page.backButtonUser);
     $('.back-button-post').on('click', page.backButtonPost);
-    $('.sign-out-button').on('click', ($.post(page.url.logout)));
+    $('.sign-out-button').on('click', ($.post(page.url.logout)) && page.signOutButton);
   },
 
   //CREATE USERNAME AND PASSWORD
@@ -94,14 +94,25 @@ var page = {
     $('.post-event-container').addClass('inactive');
   },
 
+  // to go back to user page
+
   backButtonUser: function () {
     $('.user-page').removeClass('inactive');
     $('.user-events-container').addClass('inactive');
   },
 
+  // to go back to post event page
+
   backButtonPost: function () {
     $('.user-page').removeClass('inactive');
     $('.post-event-container').addClass('inactive');
+  },
+
+  signOutButton: function () {
+    $('.user-page').addClass('inactive');
+    $('.user-events-container').addClass('inactive');
+    $('.post-event-container').addClass('inactive');
+    $('.login-page').removeClass('inactive');
   },
 
   // AJAX
@@ -174,7 +185,7 @@ var page = {
   getStoredEvents: function (){
     $.ajax ({
       method: 'GET',
-      url: page.url.createEvent,
+      url: page.url.events,
       success: function (eventInfo) {
         console.log ("RECEIVED EVENTS", eventInfo);
         page.addMyEventsToDom(eventInfo);
