@@ -22,6 +22,13 @@ public class Main {
         stmt.close();
     }
 
+    public static void deleteTables(Connection conn) throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.equals("DROP TABLE account");
+        stmt.equals("DROP TABLE event");
+        stmt.equals("DROP TABLE account_event_map");
+    }
+
     public static int createAccount(Connection conn, String name, String password) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO account VALUES (NULL, ?, ?)");
         stmt.setString(1, name);
@@ -240,6 +247,7 @@ public class Main {
 
     public static void main(String[] args) throws SQLException {
         Connection conn = DriverManager.getConnection("jdbc:h2:./main");
+        deleteTables(conn);
         createTables(conn);
         //createEvent(conn, "event1", "folly beach", LocalTime.now(), LocalDate.now(), "https://www.google.com/search?q=beach+party&espv=2&biw=1366&bih=597&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjJzpTur6fLAhXF7iYKHS3-AywQ_AUIBigB#imgrc=NeFWZwo9gu3qVM%3A", "beach party", 1);
 
