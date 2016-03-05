@@ -12,9 +12,10 @@ public class Event {
     private LocalTime time;
     private LocalDate date;
     private int id;
+    private int eventOwner;
 
 
-    public Event(int id, String name, String location, LocalTime time, LocalDate date, String image, String description) {
+    public Event(int id, String name, String location, LocalTime time, LocalDate date, String image, String description, int eventOwner) {
 
         setId(id);
         setName(name);
@@ -23,6 +24,7 @@ public class Event {
         setDate(date);
         setImage(image);
         setDescription(description);
+        setEventOwner(eventOwner);
     }
 
     public String getName() {
@@ -79,5 +81,13 @@ public class Event {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getEventOwner() {
+        return eventOwner;
+    }
+
+    public void setEventOwner(int eventOwner) {
+        this.eventOwner = eventOwner;
     }
 }
