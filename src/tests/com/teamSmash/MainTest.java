@@ -145,4 +145,17 @@ public class MainTest {
         assertTrue(account.getName().equals("bob"));
     }
 
+    @Test
+    public void testGetEventsCreatedByAccount() throws SQLException {
+        Connection conn = startConnection();
+
+        Main.createAccount(conn, "bob", "bobby");
+        Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
+
+        ArrayList<Event> eventsByAccountList = Main.getEventsCreatedByAccount(conn, 1);
+
+        assertTrue(eventsByAccountList.get(0).getName().equals("event"));
+
+    }
+
 }

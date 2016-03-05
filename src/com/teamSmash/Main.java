@@ -64,8 +64,10 @@ public class Main {
         stmt.setInt(1, accountId);
         stmt.setInt(2, eventId);
         stmt.execute();
+        stmt.close();
     }
 
+    //return an ArrayList of all accounts in the DB. Probably won't need this
     public static ArrayList<Account> selectAccounts(Connection conn) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM account");
         ResultSet results = stmt.executeQuery();
@@ -82,10 +84,9 @@ public class Main {
 
         stmt.close();
         return accountList;
-
     }
 
-    //get the account by the account name
+    //get an account by the account name
     public static Account selectAccount(Connection conn, String name) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM account WHERE account_name = ?");
         stmt.setString(1, name);
@@ -101,7 +102,7 @@ public class Main {
         }
     }
 
-    //get the account by the account id
+    //get an account by the account id
     public static Account selectAccount(Connection conn, int id) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM account WHERE account_id = ?");
         stmt.setInt(1, id);
@@ -119,6 +120,7 @@ public class Main {
 
 
     //I hope that this method is limiting output to dates from the current date to three months from the current date.
+    //Returns an ArrayList of all the events in the DB
     public static ArrayList<Event> selectEvents(Connection conn) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE event_date BETWEEN CURRENT_DATE AND DATEADD(MONTH, 3, CURRENT_DATE )");
         ResultSet results = stmt.executeQuery();
@@ -190,8 +192,21 @@ public class Main {
         return accountEventsList;
     }
 
-    public static void getEventsCreatedByAccount(Connection conn) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE ");
+    //this will return an ArrayList of events that were created by a specific user.
+    public static ArrayList<Event> getEventsCreatedByAccount(Connection conn, int accountId) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE event_owner = ?");
+        stmt.setInt(1, accountId);
+        ResultSet results = stmt.executeQuery();
+
+        ArrayList<Event> eventsByAccountList = new ArrayList<>();
+
+        while (results.next()) {
+            Event event = buildEventFromDb(results);
+            eventsByAccountList.add(event);
+        }
+
+        stmt.close();
+        return eventsByAccountList;
     }
 
     public static int getAccountId(Connection conn, String name) throws SQLException {
