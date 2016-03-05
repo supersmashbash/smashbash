@@ -306,17 +306,24 @@ public class Main {
         Spark.post(
                 "/createEvent",
                 ((request, response) -> {
+                    Session session = request.session();
+
+                    String userName = session.attribute("userName");
+                    int userId = getAccountId(conn, userName);
+
                     String name = request.queryParams("eventName");
                     String location = request.queryParams("eventLocation");
                     LocalTime time = LocalTime.parse(request.queryParams("time"));
                     LocalDate date = LocalDate.parse(request.queryParams("date"));
                     String image = request.queryParams("image");
                     String description = request.queryParams("description");
-                    int eventOwner = Integer.valueOf(request.queryParams("eventOwner"));
-                    createEvent(conn, name, location, time, date, image, description, eventOwner);
+                    createEvent(conn, name, location, time, date, image, description, userId);
                     return "";
                 })
         );
+        Spark.post(
+
+        )
 
 //        Spark.post(
 //                "/create-message",
