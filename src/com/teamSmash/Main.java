@@ -5,8 +5,6 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 
 import jodd.json.JsonSerializer;
@@ -216,12 +214,6 @@ public class Main {
         ArrayList<AccountEvents> accountEventsList = new ArrayList<>();
 
 
-//        ResultSetMetaData rsmd = results.getMetaData();
-//
-//        String name = rsmd.getColumnName(1);
-//        String name2 = rsmd.getColumnName(2);
-//        System.out.printf("STTTOPPPP");
-
         while (results.next()) {
             int eventId = results.getInt(1);
             String eventName = results.getString(2);
@@ -267,7 +259,7 @@ public class Main {
         return event;
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ParseException {
         Connection conn = DriverManager.getConnection("jdbc:h2:./main");
         deleteTables(conn);
         createTables(conn);
@@ -301,8 +293,10 @@ public class Main {
                     return s.serialize(selectEvent(conn, eventId));
                 })
         );
+
+        //returns all events created by an account
         Spark.get(
-                "/accountEvents",
+                "/accountEventsCreated",
                 ((request1, response1) -> {
                     Session session = request1.session();
                     String name = session.attribute("userName");
@@ -314,6 +308,24 @@ public class Main {
                     return s.serialize(selectEventsCreatedByAccount(conn, accountId));
                 })
         );
+
+        //returns all events an account is going to.
+        Spark.get(
+                "/accountEventsAttending",
+                ((request1, response1) -> {
+                    Session session = request1.session();
+                    String name = session.attribute("userName");
+
+                    int accountId = getAccountId(conn, name);
+
+                    JsonSerializer s = new JsonSerializer();
+                   return s.serialize(getAccountEvents(conn, accountId));
+
+                })
+
+        );
+
+
         Spark.post(
                 "/login",
                 ((request, response) -> {

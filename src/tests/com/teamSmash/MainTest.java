@@ -47,7 +47,7 @@ public class MainTest {
     @Test
     public void testCreateEvent() throws SQLException, ParseException {
         Connection conn = startConnection();
-        int affected = Main.createEvent(conn, "event", "place", "3:00", "03/20/2016", "image", "descrip", 1);
+        int affected = Main.createEvent(conn, "event", "place", "3:00", "2016-06-09", "image", "descrip", 1);
         endConnection(conn);
         assertTrue(affected == 1);
     }
@@ -56,7 +56,7 @@ public class MainTest {
     public void testTableMapping() throws SQLException, ParseException {
         Connection connection = startConnection();
         Main.createAccount(connection, "bob", "bob");
-        Main.createEvent(connection, "event", "place", "3:00", "03/20/2016", "image", "descrip", 1);
+        Main.createEvent(connection, "event", "place", "3:00", "2016-06-09", "image", "descrip", 1);
 
 
        // int affected = Main.mapUserToEvent(connection, 1, 1);
@@ -93,8 +93,8 @@ public class MainTest {
     @Test
     public void testSelectEvents() throws SQLException, ParseException {
         Connection conn = startConnection();
-        Main.createEvent(conn, "event", "place", "3:00", "03/20/2016", "image", "descrip", 1);
-        Main.createEvent(conn, "event2", "place2","3:00", "03/20/2016", "image2", "descrip2", 1);
+        Main.createEvent(conn, "event", "place", "3:00", "2016-06-09", "image", "descrip", 1);
+        Main.createEvent(conn, "event2", "place2","3:00", "2016-06-09", "image2", "descrip2", 1);
         ArrayList<Event> eventList = Main.selectEvents(conn);
 
         assertTrue(eventList.size() == 2);
@@ -103,7 +103,7 @@ public class MainTest {
     @Test
     public void testSelectEvent() throws SQLException, ParseException {
         Connection conn = startConnection();
-        Main.createEvent(conn, "event", "place", "3:00", "03/20/2016", "image", "descrip", 1);
+        Main.createEvent(conn, "event", "place", "3:00", "2016-06-09", "image", "descrip", 1);
         Event event = Main.selectEvent(conn, 1);
 
         assertTrue(event != null);
@@ -117,7 +117,7 @@ public class MainTest {
     @Test
     public void testEditEvent() throws SQLException, ParseException {
         Connection conn = startConnection();
-        Main.createEvent(conn, "event", "place", "3:00", "03/20/2016", "image", "descrip", 1);
+        Main.createEvent(conn, "event", "place", "3:00", "2016-06-09", "image", "descrip", 1);
         Main.editEvent(conn, 1, "eventEdit", "place", LocalDate.now().toString(), LocalDate.now().toString(), "image", "descrip", 1);
         Event event = Main.selectEvent(conn, 1);
 
@@ -152,7 +152,7 @@ public class MainTest {
         Connection conn = startConnection();
 
         Main.createAccount(conn, "bob", "bobby");
-        Main.createEvent(conn, "event", "place","3:00", "03/20/2016", "image", "descrip", 1);
+        Main.createEvent(conn, "event", "place","3:00", "2016-06-09", "image", "descrip", 1);
 
         ArrayList<Event> eventsByAccountList = Main.selectEventsCreatedByAccount(conn, 1);
 
