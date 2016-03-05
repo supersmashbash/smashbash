@@ -147,6 +147,23 @@ public class Main {
         }
     }
 
+    //this will return an ArrayList of events that were created by a specific user.
+    public static ArrayList<Event> selectEventsCreatedByAccount(Connection conn, int accountId) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE event_owner = ?");
+        stmt.setInt(1, accountId);
+        ResultSet results = stmt.executeQuery();
+
+        ArrayList<Event> eventsByAccountList = new ArrayList<>();
+
+        while (results.next()) {
+            Event event = buildEventFromDb(results);
+            eventsByAccountList.add(event);
+        }
+
+        stmt.close();
+        return eventsByAccountList;
+    }
+
     public static void editEvent(Connection conn, int eventId, String name, String location, LocalTime time, LocalDate date, String image, String description, int accountId) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("UPDATE event SET event_name = ?, event_location = ?, " +
                 "event_time = ?, event_date = ?, event_image = ?, event_description = ?, event_owner = ?" +
@@ -192,22 +209,6 @@ public class Main {
         return accountEventsList;
     }
 
-    //this will return an ArrayList of events that were created by a specific user.
-    public static ArrayList<Event> getEventsCreatedByAccount(Connection conn, int accountId) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE event_owner = ?");
-        stmt.setInt(1, accountId);
-        ResultSet results = stmt.executeQuery();
-
-        ArrayList<Event> eventsByAccountList = new ArrayList<>();
-
-        while (results.next()) {
-            Event event = buildEventFromDb(results);
-            eventsByAccountList.add(event);
-        }
-
-        stmt.close();
-        return eventsByAccountList;
-    }
 
     public static int getAccountId(Connection conn, String name) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT account_id FROM account WHERE account_name = ?");

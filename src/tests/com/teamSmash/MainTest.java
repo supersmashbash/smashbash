@@ -152,7 +152,7 @@ public class MainTest {
         Main.createAccount(conn, "bob", "bobby");
         Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
 
-        ArrayList<Event> eventsByAccountList = Main.getEventsCreatedByAccount(conn, 1);
+        ArrayList<Event> eventsByAccountList = Main.selectEventsCreatedByAccount(conn, 1);
 
         assertTrue(eventsByAccountList.get(0).getName().equals("event"));
 
