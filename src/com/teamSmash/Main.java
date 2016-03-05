@@ -177,6 +177,15 @@ public class Main {
         return eventsByAccountList;
     }
 
+    public static void deleteEvent (Connection conn, int eventId) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM event WHERE event_id = ?");
+        stmt.setInt(1, eventId);
+        stmt.execute();
+        PreparedStatement stmtTwo = conn.prepareStatement("DELETE FROM account_event_map WHERE event_id = ?");
+        stmtTwo.setInt(1, eventId);
+        stmtTwo.execute();
+    }
+
     public static void editEvent(Connection conn, int eventId, String name, String location, String time, String date, String image, String description, int accountId) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("UPDATE event SET event_name = ?, event_location = ?, " +
                 "event_time = ?, event_date = ?, event_image = ?, event_description = ?, event_owner = ?" +
@@ -366,28 +375,43 @@ public class Main {
                     if(!request.queryParams("date").equals("")){
                         date = request.queryParams("date");
                     }
-//                    LocalTime time = LocalTime.parse(request.queryParams("time"));
-//                    LocalDate date = LocalDate.parse(request.queryParams("date"));
+
                     String image = request.queryParams("image");
                     String description = request.queryParams("description");
                     createEvent(conn, name, location, time, date, image, description, userId);
                     return "";
                 })
         );
+        Spark.post(
+                "/deleteEvent",
+                ((request, response) -> {
+                    int eventId = Integer.valueOf(request.queryParams("eventId"));
+                    deleteEvent(conn, eventId);
+                    return "";
+                })
+        );
+        Spark.post(
+                "/editEvent",
+                ((request, response) -> {
 
-
-
-//        Spark.post(
-//                "/create-message",
-//                ((request, response) -> {
-//                    String text = request.queryParams("newMessage");
-//                    Message message = new Message(text);
-//                    getUserFromSession(request.session()).getMessages().add(message);
-//                    response.redirect("/");
-//                    return "";
-//                })
-//        );
-
+                    int eventId = Integer.valueOf(request.queryParams("eventId"));
+                    String name = request.queryParams("eventName");
+                    String location = request.queryParams("eventLocation");
+                    String date = null;
+                    String time = null;
+                    if(!request.queryParams("time").equals("")){
+                        time = request.queryParams("time");
+                    }
+                    if(!request.queryParams("date").equals("")){
+                        date = request.queryParams("date");
+                    }
+                    String image = request.queryParams("image");
+                    String description = request.queryParams("description");
+                    int accountId = Integer.valueOf(request.queryParams("accountId"));
+                    editEvent(conn, eventId, name, location, time, date, image, description, accountId);
+                    return "";
+                })
+        );
         Spark.post(
                 "/logout",
                 ((request, response) -> {
@@ -396,55 +420,5 @@ public class Main {
                     return "";
                 })
         );
-
-
-
-//                ((request, response) -> {
-//                    Session session = request.session();
-//                    String name = session.attribute("accountName");
-//                    return allAccounts.get(name);
-//                    Account account = getAccountFromSession(request.session());
-//
-//                    HashMap m = new HashMap();
-//                    if (account == null) {
-//                        return new ModelAndView(m, "login.html");
-//                    }
-//                    else {
-//                        m.put("name", account.getName());
-//                        m.put("password", account.getPassword());
-//                        m.put("id", account.getId());
-//                        m.put("events", account.getEvents());
-//                        return new ModelAndView(m, "home.html");
-//                    }
-//                }
-//
-//        );
-//        Spark.post(
-//                "/create-user",
-//                ((request, response) -> {
-//                    Account account = null;
-//                    String name = request.queryParams("loginName");
-//                    String password = request.queryParams("password");
-//                    if (allAccounts.containsKey(name)) {
-//                        if (password.equalsIgnoreCase(allAccounts.get(name).getPassword())) {
-//                            account = allAccounts.get(name);
-//                        } else {
-//                        }
-//                    } else {
-//                        account = new Account(name, password);
-//                        allAccounts.put(account.getName(), account);
-//                    }
-//                    Session session = request.session();
-//                    session.attribute("userName", name);
-//                    allAccounts.put(account.getName(), account);
-//
-//                    return "";
-//                })
-//        );
-//
-//    static Account getAccountFromSession(Session session) {
-//        String name = session.attribute("accountName");
-//        return allAccounts.get(name);
-//    }
     }
 }
