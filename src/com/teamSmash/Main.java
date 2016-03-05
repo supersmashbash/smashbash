@@ -2,6 +2,9 @@ package com.teamSmash;
 
 import java.sql.*;
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -17,7 +20,7 @@ public class Main {
         Statement stmt = conn.createStatement();
         stmt.execute("CREATE TABLE IF NOT EXISTS account (account_id IDENTITY, account_name VARCHAR, account_password VARCHAR)");
         stmt.execute("CREATE TABLE IF NOT EXISTS event (event_id IDENTITY, event_name VARCHAR, event_location VARCHAR, event_time VARCHAR, " +
-                "event_date VARCHAR, event_image VARCHAR, event_description VARCHAR, event_owner INT)");
+                "event_date DATE, event_image VARCHAR, event_description VARCHAR, event_owner INT)");
         stmt.execute("CREATE TABLE IF NOT EXISTS account_event_map (map_id IDENTITY, account_id INT, event_id INT)");
         stmt.close();
     }
@@ -37,13 +40,19 @@ public class Main {
         return stmt.executeUpdate();
     }
 
-    public static int createEvent(Connection conn, String name, String location, LocalTime time,
-                                  LocalDate date, String image, String description, int accountId) throws SQLException {
+    public static int createEvent(Connection conn, String name, String location, String time,
+                                  String date, String image, String description, int accountId) throws SQLException, ParseException {
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO event VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        //prepare a time formatter
+//        String dateInString = new java.text.SimpleDateFormat("MM/dd/yyyy").format(date);
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        Date parsedDate = new java.sql.Date(formatter.parse(date).getTime());
+
+
         stmt.setString(1, name);
         stmt.setString(2, location);
-        stmt.setTime(3, (Time.valueOf(time)));  //here I am needing to convert a LocalTime object into a Time object with the DB will accept more freely. I think.
-        stmt.setDate(4, (Date.valueOf(date)));  //same here but for Date.
+        stmt.setString(3, (time));  //here I am needing to convert a LocalTime object into a Time object with the DB will accept more freely. I think.
+        stmt.setDate(4, (parsedDate));  //same here but for Date.
         stmt.setString(5, image);
         stmt.setString(6, description);
         stmt.setInt(7, accountId);
@@ -171,13 +180,13 @@ public class Main {
         return eventsByAccountList;
     }
 
-    public static void editEvent(Connection conn, int eventId, String name, String location, LocalTime time, LocalDate date, String image, String description, int accountId) throws SQLException {
+    public static void editEvent(Connection conn, int eventId, String name, String location, String time, String date, String image, String description, int accountId) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("UPDATE event SET event_name = ?, event_location = ?, " +
                 "event_time = ?, event_date = ?, event_image = ?, event_description = ?, event_owner = ?" +
                 "WHERE event_id = ?");
         stmt.setString(1, name);
         stmt.setString(2, location);
-        stmt.setTime(3, Time.valueOf(time));
+        stmt.setString(3, time);
         stmt.setDate(4, Date.valueOf(date));
         stmt.setString(5, image);
         stmt.setString(6, description);
@@ -236,12 +245,12 @@ public class Main {
         int id = results.getInt(1);
         String name = results.getString(2);
         String location = results.getString(3);
-        Time time = results.getTime(4);
+        String time = results.getString(4);
         Date date = results.getDate(5);
         String image = results.getString(6);
         String description = results.getString(7);
         int accountId = results.getInt(8);
-        Event event = new Event(id, name, location, time.toLocalTime(), date.toLocalDate(), image, description, accountId);
+        Event event = new Event(id, name, location, time, date.toLocalDate(), image, description, accountId);
         return event;
     }
 
@@ -251,7 +260,7 @@ public class Main {
         createTables(conn);
         //createEvent(conn, "event1", "folly beach", LocalTime.now(), LocalDate.now(), "https://www.google.com/search?q=beach+party&espv=2&biw=1366&bih=597&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjJzpTur6fLAhXF7iYKHS3-AywQ_AUIBigB#imgrc=NeFWZwo9gu3qVM%3A", "beach party", 1);
 
-        createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
+        //createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
         //createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
 
         Spark.externalStaticFileLocation("public");
@@ -326,8 +335,8 @@ public class Main {
 
                     String name = request.queryParams("eventName");
                     String location = request.queryParams("eventLocation");
-                    LocalTime time = LocalTime.parse(request.queryParams("time"));
-                    LocalDate date = LocalDate.parse(request.queryParams("date"));
+                    String time = request.queryParams("time");
+                    String date = request.queryParams("date");
                     String image = request.queryParams("image");
                     String description = request.queryParams("description");
                     createEvent(conn, name, location, time, date, image, description, userId);
