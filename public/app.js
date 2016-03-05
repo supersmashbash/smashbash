@@ -8,7 +8,9 @@ var page = {
   // url: "http://tiny-tiny.herokuapp.com/collections/hbd",
   url: {
     login: "/login",
-    logout: "/logout"
+    logout: "/logout",
+    events: "/events",
+    createEvent: "/createEvent"
     //need to add 'create events' route
   },
   init: function(){
@@ -140,14 +142,14 @@ var page = {
       eventLocation: eventLocation,
       time: time,
       date: date,
-      description: descrip,
       image: img,
+      description: descrip,
     };
   },
   storeEvent: function (eventInfo) {
     $.ajax ({
       method: 'POST',
-      url: 'http://tiny-tiny.herokuapp.com/collections/create-eventz',
+      url: page.url.createEvent,
       data: eventInfo,
       success: function (eventInfo) {
         console.log ("CREATED EVENT", eventInfo);
@@ -172,7 +174,7 @@ var page = {
   getStoredEvents: function (){
     $.ajax ({
       method: 'GET',
-      url: 'http://tiny-tiny.herokuapp.com/collections/create-eventz',
+      url: page.url.createEvent,
       success: function (eventInfo) {
         console.log ("RECEIVED EVENTS", eventInfo);
         page.addMyEventsToDom(eventInfo);
