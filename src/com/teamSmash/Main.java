@@ -327,19 +327,26 @@ public class Main {
                 })
         );
         Spark.post(
+                "/edit",
+                ((request, response) -> {
 
-        )
+                })
+        );
 
-//        Spark.post(
-//                "/create-message",
-//                ((request, response) -> {
-//                    String text = request.queryParams("newMessage");
-//                    Message message = new Message(text);
-//                    getUserFromSession(request.session()).getMessages().add(message);
-//                    response.redirect("/");
-//                    return "";
-//                })
-//        );
+//        public static void editEvent(Connection conn, int eventId, String name, String location, LocalTime time, LocalDate date, String image, String description, int accountId) throws SQLException {
+//            PreparedStatement stmt = conn.prepareStatement("UPDATE event SET event_name = ?, event_location = ?, " +
+//                    "event_time = ?, event_date = ?, event_image = ?, event_description = ?, event_owner = ?" +
+//                    "WHERE event_id = ?");
+//            stmt.setString(1, name);
+//            stmt.setString(2, location);
+//            stmt.setTime(3, Time.valueOf(time));
+//            stmt.setDate(4, Date.valueOf(date));
+//            stmt.setString(5, image);
+//            stmt.setString(6, description);
+//            stmt.setInt(7, accountId);
+//            stmt.setInt(8, eventId);
+//            stmt.execute();
+//        }
 
         Spark.post(
                 "/logout",
