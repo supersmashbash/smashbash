@@ -163,7 +163,7 @@ var page = {
       url: page.url.createEvent,
       data: eventInfo,
       success: function (eventInfo) {
-        console.log ("CREATED EVENT", eventInfo);
+        console.log ("CREATED EVENT" + eventInfo);
       },
       error: function (err) {
         console.log ("creating event not working", err);
@@ -187,8 +187,9 @@ var page = {
       method: 'GET',
       url: page.url.events,
       success: function (eventInfo) {
-        console.log ("RECEIVED EVENTS", eventInfo);
-        page.addMyEventsToDom(eventInfo);
+        console.log ("RECEIVED EVENTS", JSON.parse(eventInfo));
+        var eventI = JSON.parse(eventInfo);
+        page.addMyEventsToDom(eventI);
       },
       error: function (err) {
         console.log("DID NOT RECEIVE EVENTS", err);
