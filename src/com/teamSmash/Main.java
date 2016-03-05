@@ -44,7 +44,7 @@ public class Main {
                                   String date, String image, String description, int accountId) throws SQLException, ParseException {
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO event VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         //prepare a time formatter
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date parsedDate = new java.sql.Date(formatter.parse(date).getTime());
 
 
@@ -290,6 +290,19 @@ public class Main {
 
                     JsonSerializer s = new JsonSerializer();
                     return s.serialize(selectEvent(conn, eventId));
+                })
+        );
+        Spark.get(
+                "/accountEvents",
+                ((request1, response1) -> {
+                    Session session = request1.session();
+                    String name = session.attribute("userName");
+
+                    int accountId = getAccountId(conn, name);
+
+
+                    JsonSerializer s = new JsonSerializer();
+                    return s.serialize(selectEventsCreatedByAccount(conn, accountId));
                 })
         );
 
