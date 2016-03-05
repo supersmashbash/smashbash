@@ -78,6 +78,7 @@ var page = {
 
   // to go back to login page
   showLoginPage: function() {
+    console.log ("working?")
     $('.login-page').removeClass('inactive');
     $('.user-page').addClass('inactive');
     $('.user-events-container').addClass('inactive');
@@ -110,7 +111,7 @@ var page = {
         $('.sign-out-button').on('click', page.showLoginPage);
       },
       error: function (err) {
-        console.error("error", err);        
+        console.error("error", err);
       }
     });
   }
