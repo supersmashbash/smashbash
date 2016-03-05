@@ -41,6 +41,7 @@ public class Main {
         stmt.setString(6, description);
         stmt.setInt(7, accountId);
         int affected = stmt.executeUpdate(); //this is so I can check to see if something was created
+
         int eventId = 0;  //just have to initialize this I guess
 
         ResultSet result = stmt.getGeneratedKeys();  //this should contain the auto-generated ID
@@ -50,22 +51,19 @@ public class Main {
         }
         stmt.close();
 
-        PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO account_event_map VALUES (NULL, ?, ?)");
-        stmt2.setInt(1, accountId);
-        stmt2.setInt(2, eventId);
-
+        mapUserToEvent(conn, accountId, eventId);
 
         return affected;
     }
 
     //this is the table we will use to populate lists of all events being attending by a user
     //as well as all users going to an event
-    public static int mapUserToEvent(Connection conn, int accountId, int eventId) throws SQLException {
+    //this is being run every time a user enters a new event.
+    public static void mapUserToEvent(Connection conn, int accountId, int eventId) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO account_event_map VALUES(NULL, ?, ?)");
         stmt.setInt(1, accountId);
         stmt.setInt(2, eventId);
-
-        return stmt.executeUpdate();
+        stmt.execute();
     }
 
     public static ArrayList<Account> selectAccounts(Connection conn) throws SQLException {
@@ -162,7 +160,9 @@ public class Main {
         stmt.execute();
     }
 
-    //once i know this works i can take some of the SQL out.
+    //once i know this works i can take some of the SQL out. I'm currently gettin gmore fields than i actually need.
+    //this method will take a account ID number and it will return an arraylist of all of the events they are attending
+    // (in a special class made for that purpose)
     public static ArrayList<AccountEvents> getAccountEvents(Connection conn, int accountId) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT m.event_id, e.event_name " +
                                                         "FROM account_event_map m " +
@@ -188,7 +188,10 @@ public class Main {
             accountEventsList.add(new AccountEvents(account, event));
         }
         return accountEventsList;
+    }
 
+    public static void getEventsCreatedByAccount(Connection conn) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE ");
     }
 
     public static int getAccountId(Connection conn, String name) throws SQLException {
@@ -204,6 +207,8 @@ public class Main {
         return accountId;
     }
 
+    //just broke the logic up here a little bit.
+    //This just takes runs in a resultSet while loop and taks the data from the RS and builds it into an Event object and returns that.
     public static Event buildEventFromDb(ResultSet results) throws SQLException {
         int id = results.getInt(1);
         String name = results.getString(2);

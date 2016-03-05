@@ -57,11 +57,11 @@ public class MainTest {
         Main.createEvent(connection, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
 
 
-        int affected = Main.mapUserToEvent(connection, 1, 1);
+       // int affected = Main.mapUserToEvent(connection, 1, 1);
         ArrayList<AccountEvents> accountEventList = Main.getAccountEvents(connection, 1);
 
         endConnection(connection);
-        assertTrue(affected == 1 && accountEventList.get(0).getAccount().getName().equals("bob"));
+        assertTrue(accountEventList.get(0).getAccount().getName().equals("bob"));
     }
 
     @Test
