@@ -45,7 +45,7 @@ public class MainTest {
     @Test
     public void testCreateEvent() throws SQLException {
         Connection conn = startConnection();
-        int affected = Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip");
+        int affected = Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
         endConnection(conn);
         assertTrue(affected == 1);
     }
@@ -53,9 +53,15 @@ public class MainTest {
     @Test
     public void testTableMapping() throws SQLException {
         Connection connection = startConnection();
-        int affected = Main.mapUserToEvent(connection, 1, 1);
+        Main.createAccount(connection, "bob", "bob");
+        Main.createEvent(connection, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
+
+
+       // int affected = Main.mapUserToEvent(connection, 1, 1);
+        ArrayList<AccountEvents> accountEventList = Main.getAccountEvents(connection, 1);
+
         endConnection(connection);
-        assertTrue(affected == 1);
+        assertTrue(accountEventList.get(0).getAccount().getName().equals("bob"));
     }
 
     @Test
@@ -85,8 +91,8 @@ public class MainTest {
     @Test
     public void testSelectEvents() throws SQLException {
         Connection conn = startConnection();
-        Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip");
-        Main.createEvent(conn, "event2", "place2", LocalTime.now(), LocalDate.now(), "image2", "descrip2");
+        Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
+        Main.createEvent(conn, "event2", "place2", LocalTime.now(), LocalDate.now(), "image2", "descrip2", 1);
         ArrayList<Event> eventList = Main.selectEvents(conn);
 
         assertTrue(eventList.size() == 2);
@@ -95,7 +101,7 @@ public class MainTest {
     @Test
     public void testSelectEvent() throws SQLException {
         Connection conn = startConnection();
-        Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip");
+        Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
         Event event = Main.selectEvent(conn, 1);
 
         assertTrue(event != null);
@@ -109,8 +115,8 @@ public class MainTest {
     @Test
     public void testEditEvent() throws SQLException {
         Connection conn = startConnection();
-        Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip");
-        Main.editEvent(conn, 1, "eventEdit", "place", LocalTime.now(), LocalDate.now(), "image", "descrip");
+        Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
+        Main.editEvent(conn, 1, "eventEdit", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
         Event event = Main.selectEvent(conn, 1);
 
         assertTrue(event.getName().equals("eventEdit"));
@@ -137,6 +143,19 @@ public class MainTest {
         Account account = Main.selectAccount(conn, "bob");
 
         assertTrue(account.getName().equals("bob"));
+    }
+
+    @Test
+    public void testGetEventsCreatedByAccount() throws SQLException {
+        Connection conn = startConnection();
+
+        Main.createAccount(conn, "bob", "bobby");
+        Main.createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
+
+        ArrayList<Event> eventsByAccountList = Main.selectEventsCreatedByAccount(conn, 1);
+
+        assertTrue(eventsByAccountList.get(0).getName().equals("event"));
+
     }
 
 }
