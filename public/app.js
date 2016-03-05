@@ -2,6 +2,8 @@ $(document).ready(function(){
   page.init();
 });
 
+var userName = "";
+
 var page = {
   // url: "http://tiny-tiny.herokuapp.com/collections/hbd",
   url: {
@@ -18,7 +20,6 @@ var page = {
   },
   events: function() {
     $('.create-button').on('click', page.storingUserName);
-    $('.sign-in-button').on('click', page.checkingUserName);
     $('.my-events-button').on('click', page.hideUserPage); //toggling
     $('.new-events-button').on('click', page.hideUserPageAgain); //toggling
     $('.create-event-button').on('click', page.createEvent); //submiting 'create events' form
@@ -48,6 +49,7 @@ var page = {
     else {
       page.hideLoginPage();
       page.addNewUserPassToServer(page.getPasswordToStorage());
+      $("#welcome-message").append(page.getUserFromDom());
     }
   },
 
@@ -96,6 +98,7 @@ var page = {
       method: 'POST',
       data: usernameInput,
       success: function () {
+        userName = page.getUserFromDom();
         page.getPasswordToStorage();
       },
       error: function (err) {
@@ -139,8 +142,8 @@ var page = {
       eventLocation: eventLocation,
       time: time,
       date: date,
-      descrip: descrip,
-      img: img
+      description: descrip,
+      image: img,
     };
   },
   storeEvent: function (eventInfo) {
