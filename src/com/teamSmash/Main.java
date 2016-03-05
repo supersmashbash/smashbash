@@ -255,7 +255,6 @@ public class Main {
         String dateString = df.format(date);
 
         Event event = new Event(id, name, location, time, dateString, image, description, accountId);
-      //  public Event(int id, String name, String location, String time, LocalDate date, String image, String description, int eventOwner) {
         return event;
     }
 
