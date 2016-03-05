@@ -81,7 +81,7 @@ var page = {
 
   addNewUserPassToServer: function(usernameInput) {
     $.ajax({
-      url: page.url.createLogin,
+      url: page.url.login,
       method: 'POST',
       data: usernameInput,
       success: function () {
