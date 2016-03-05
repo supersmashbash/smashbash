@@ -317,7 +317,7 @@ public class Main {
                 })
         );
         Spark.post(
-                "/createEvent",
+                "/events",
                 ((request, response) -> {
                     Session session = request.session();
 
@@ -326,20 +326,29 @@ public class Main {
 
                     String name = request.queryParams("eventName");
                     String location = request.queryParams("eventLocation");
-                    LocalTime time = LocalTime.parse(request.queryParams("time"));
-                    LocalDate date = LocalDate.parse(request.queryParams("date"));
+                    LocalDate date = null;
+                    LocalTime time = null;
+                    if(!request.queryParams("time").equals("")){
+                        time = LocalTime.parse(request.queryParams("time"));
+                    }
+
+                    if(!request.queryParams("date").equals("")){
+                        date = LocalDate.parse(request.queryParams("date"));
+                    }
+//                    LocalTime time = LocalTime.parse(request.queryParams("time"));
+//                    LocalDate date = LocalDate.parse(request.queryParams("date"));
                     String image = request.queryParams("image");
                     String description = request.queryParams("description");
                     createEvent(conn, name, location, time, date, image, description, userId);
                     return "";
                 })
         );
-        Spark.post(
-                "/deleteEvent",
-                ((request, response) -> {
-
-                })
-        );
+//        Spark.post(
+//                "/deleteEvent",
+//                ((request, response) -> {
+//
+//                })
+//        );
 
 //        public static void editEvent(Connection conn, int eventId, String name, String location, LocalTime time, LocalDate date, String image, String description, int accountId) throws SQLException {
 //            PreparedStatement stmt = conn.prepareStatement("UPDATE event SET event_name = ?, event_location = ?, " +
