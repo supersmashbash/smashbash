@@ -334,12 +334,12 @@ public class Main {
                     return "";
                 })
         );
-        Spark.post(
-                "/edit",
-                ((request, response) -> {
-
-                })
-        );
+//        Spark.post(
+//                "/deleteEvent",
+//                ((request, response) -> {
+//
+//                })
+//        );
 
 //        public static void editEvent(Connection conn, int eventId, String name, String location, LocalTime time, LocalDate date, String image, String description, int accountId) throws SQLException {
 //            PreparedStatement stmt = conn.prepareStatement("UPDATE event SET event_name = ?, event_location = ?, " +
