@@ -44,14 +44,13 @@ public class Main {
                                   String date, String image, String description, int accountId) throws SQLException, ParseException {
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO event VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         //prepare a time formatter
-//        String dateInString = new java.text.SimpleDateFormat("MM/dd/yyyy").format(date);
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         Date parsedDate = new java.sql.Date(formatter.parse(date).getTime());
 
 
         stmt.setString(1, name);
         stmt.setString(2, location);
-        stmt.setString(3, (time));  //here I am needing to convert a LocalTime object into a Time object with the DB will accept more freely. I think.
+        stmt.setString(3, time);  //here I am needing to convert a LocalTime object into a Time object with the DB will accept more freely. I think.
         stmt.setDate(4, (parsedDate));  //same here but for Date.
         stmt.setString(5, image);
         stmt.setString(6, description);
@@ -251,6 +250,7 @@ public class Main {
         String description = results.getString(7);
         int accountId = results.getInt(8);
         Event event = new Event(id, name, location, time, date.toLocalDate(), image, description, accountId);
+      //  public Event(int id, String name, String location, String time, LocalDate date, String image, String description, int eventOwner) {
         return event;
     }
 
@@ -335,14 +335,14 @@ public class Main {
 
                     String name = request.queryParams("eventName");
                     String location = request.queryParams("eventLocation");
-                    LocalDate date = null;
-                    LocalTime time = null;
+                    String date = null;
+                    String time = null;
                     if(!request.queryParams("time").equals("")){
-                        time = LocalTime.parse(request.queryParams("time"));
+                        time = request.queryParams("time");
                     }
 
                     if(!request.queryParams("date").equals("")){
-                        date = LocalDate.parse(request.queryParams("date"));
+                        date = request.queryParams("date");
                     }
 //                    LocalTime time = LocalTime.parse(request.queryParams("time"));
 //                    LocalDate date = LocalDate.parse(request.queryParams("date"));
