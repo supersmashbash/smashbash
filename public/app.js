@@ -2,11 +2,14 @@ $(document).ready(function(){
   page.init();
 });
 
+var userName = "";
+
 var page = {
   // url: "http://tiny-tiny.herokuapp.com/collections/hbd",
   url: {
     login: "/login",
     logout: "/logout"
+    //need to add 'create events' route
   },
   init: function(){
     page.styling();
@@ -17,9 +20,10 @@ var page = {
   },
   events: function() {
     $('.create-button').on('click', page.storingUserName);
-    $('.sign-in-button').on('click', page.checkingUserName);
-    $('.my-events-button').on('click', page.hideUserPage);
-    $('.new-events-button').on('click', page.hideUserPageAgain);
+    $('.my-events-button').on('click', page.hideUserPage); //toggling
+    $('.new-events-button').on('click', page.hideUserPageAgain); //toggling
+    $('.create-event-button').on('click', page.createEvent); //submiting 'create events' form
+    $('.my-events-button').on('click', page.getStoredEvents); //showing 'my events
   },
 
   //CREATE USERNAME AND PASSWORD
@@ -45,6 +49,7 @@ var page = {
     else {
       page.hideLoginPage();
       page.addNewUserPassToServer(page.getPasswordToStorage());
+      $("#welcome-message").append(page.getUserFromDom());
     }
   },
 
@@ -93,6 +98,7 @@ var page = {
       method: 'POST',
       data: usernameInput,
       success: function () {
+        userName = page.getUserFromDom();
         page.getPasswordToStorage();
       },
       error: function (err) {
@@ -110,10 +116,74 @@ var page = {
         $('.sign-out-button').on('click', page.showLoginPage);
       },
       error: function (err) {
-        console.error("error", err);        
+        console.error("error", err);
       }
     });
-  }
+  },
+
+//CREATE EVENTS
+
+  createEvent: function () {
+    event.preventDefault();
+    var eventInfo = page.getEventInfo();
+    console.log (eventInfo);
+    page.storeEvent(eventInfo);
+  },
+
+  getEventInfo: function () {
+    var eventName = $('input[name="eventName"]').val();
+    var eventLocation = $('input[name="eventLocation"]').val();
+    var time = $('input[name="timeOfEvent"]').val();
+    var date = $('input[name="dateOfEvent"]').val();
+    var descrip = $('input[name="descripOfEvent"]').val();
+    var img = $('input[name="imgOfEvent"]').val();
+    return {
+      eventName: eventName,
+      eventLocation: eventLocation,
+      time: time,
+      date: date,
+      description: descrip,
+      image: img,
+    };
+  },
+  storeEvent: function (eventInfo) {
+    $.ajax ({
+      method: 'POST',
+      url: 'http://tiny-tiny.herokuapp.com/collections/create-events',
+      data: eventInfo,
+      success: function (eventInfo) {
+        console.log ("CREATED EVENT", eventInfo);
+      },
+      error: function (err) {
+        console.log ("creating event not working", err);
+      },
+    });
+  },
+
+//MY EVENTS
+
+
+  addMyEventsToDom: function (eventInfo) {
+    $('.created-events').html("");
+    var tmpl = _.template(templates.events);
+    eventInfo.forEach (function (evt) {
+      $('.created-events').append(tmpl(evt));
+    });
+    page.hideUserPage ();
+  },
+  getStoredEvents: function (){
+    $.ajax ({
+      method: 'GET',
+      url: 'http://tiny-tiny.herokuapp.com/collections/create-events',
+      success: function (eventInfo) {
+        console.log ("RECEIVED EVENTS", eventInfo);
+        page.addMyEventsToDom(eventInfo);
+      },
+      error: function (err) {
+        console.log("DID NOT RECEIVE EVENTS", err);
+      }
+    });
+  },
 
 
 }; //end of page init

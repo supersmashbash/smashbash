@@ -36,7 +36,7 @@ public class Main {
         stmt.setString(1, name);
         stmt.setString(2, location);
         stmt.setTime(3, (Time.valueOf(time)));  //here I am needing to convert a LocalTime object into a Time object with the DB will accept more freely. I think.
-        stmt.setDate(4, Date.valueOf(date));  //same here but for Date.
+        stmt.setDate(4, (Date.valueOf(date)));  //same here but for Date.
         stmt.setString(5, image);
         stmt.setString(6, description);
         stmt.setInt(7, accountId);
@@ -241,7 +241,10 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         Connection conn = DriverManager.getConnection("jdbc:h2:./main");
         createTables(conn);
-        //createEvent(conn, "event1", "folly beach", LocalTime.now(), LocalDate.now(), "https://www.google.com/search?q=beach+party&espv=2&biw=1366&bih=597&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjJzpTur6fLAhXF7iYKHS3-AywQ_AUIBigB#imgrc=NeFWZwo9gu3qVM%3A", "beach party");
+        //createEvent(conn, "event1", "folly beach", LocalTime.now(), LocalDate.now(), "https://www.google.com/search?q=beach+party&espv=2&biw=1366&bih=597&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjJzpTur6fLAhXF7iYKHS3-AywQ_AUIBigB#imgrc=NeFWZwo9gu3qVM%3A", "beach party", 1);
+
+        createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
+        //createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
 
         Spark.externalStaticFileLocation("public");
 
@@ -286,6 +289,8 @@ public class Main {
 
                     JsonSerializer serializer = new JsonSerializer();
 
+
+
                     //create a session
                     Session session = request.session();
 
@@ -322,7 +327,7 @@ public class Main {
                 })
         );
         Spark.post(
-                ""
+
         )
 
 //        Spark.post(
