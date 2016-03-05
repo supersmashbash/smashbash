@@ -5,8 +5,8 @@ $(document).ready(function(){
 var page = {
   // url: "http://tiny-tiny.herokuapp.com/collections/hbd",
   url: {
-    createLogin: "/create-user",
-    login: "/login"
+    login: "/login",
+    logout: "/logout"
   },
   init: function(){
     page.styling();
@@ -76,12 +76,20 @@ var page = {
     $('.post-event-container').removeClass('inactive');
   },
 
+  // to go back to login page
+  showLoginPage: function() {
+    $('.login-page').removeClass('inactive');
+    $('.user-page').addClass('inactive');
+    $('.user-events-container').addClass('inactive');
+    $('.post-event-container').addClass('inactive');
+  },
+
 
   // AJAX
 
   addNewUserPassToServer: function(usernameInput) {
     $.ajax({
-      url: page.url.createLogin,
+      url: page.url.login,
       method: 'POST',
       data: usernameInput,
       success: function () {
@@ -93,57 +101,19 @@ var page = {
     });
   },
 
-  //LOGGING IN
-
-  logIn: function () {
-  },
-  getPrevUserPassFromDom: function() {
-      var username = $('input[name="user-login"]').val();
-      return username;
-    },
-
-  getPrevPasswordFromDom: function () {
-        var password = $('input[name="user-password"]').val();
-        return password;
-  },
-
-  checkUserPass: function (){
-    var username = page.getPrevUserPassFromDom();
-    var password = page.getPrevPasswordFromDom();
-    return {
-      username: username,
-      password: password
-    };
-  },
-
-  checkingUserName: function(event) { //storing username & password in Server
-    event.preventDefault();
-    var prevUserName = page.getPrevUserPassFromDom();
-    var prevPassword = page.getPrevPasswordFromDom();
-    if (prevUserName === "" && prevPassword  === ""){
-      alert("Type in your username and password!");
-    }
-    else {
-      page.hideUserPage();
-      page.sendUserPass(page.checkUserPass());
-    }
-  },
-
-
-  //AJAX
-  sendUserPass: function (usernameInput) {
-    console.log('username input', usernameInput);
+  logoutOfServer: function(usernameLogout) {
     $.ajax({
-      url: page.url.login,
+      url: page.url.logout,
       method: 'POST',
-      data: usernameInput,
-      success: function () {
-        page.checkUserPass();
+      data: usernameLogout,
+      success: function() {
+        $('.sign-out-button').on('click', page.showLoginPage);
       },
       error: function (err) {
-        console.log ("error", err);
+        console.error("error", err);        
       }
     });
-  },
+  }
+
 
 }; //end of page init
