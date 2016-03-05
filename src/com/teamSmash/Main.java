@@ -179,7 +179,7 @@ public class Main {
         stmt.execute();
     }
 
-    //once i know this works i can take some of the SQL out. I'm currently gettin gmore fields than i actually need.
+    //once i know this works i can take some of the SQL out. I'm currently getting more fields than i actually need.
     //this method will take a account ID number and it will return an arraylist of all of the events they are attending
     // (in a special class made for that purpose)
     public static ArrayList<AccountEvents> getAccountEvents(Connection conn, int accountId) throws SQLException {
@@ -304,7 +304,7 @@ public class Main {
                 })
         );
         Spark.post(
-                "/create-event",
+                "/createEvent",
                 ((request, response) -> {
                     String name = request.queryParams("eventName");
                     String location = request.queryParams("eventLocation");
@@ -312,9 +312,12 @@ public class Main {
                     LocalDate date = LocalDate.parse(request.queryParams("date"));
                     String image = request.queryParams("image");
                     String description = request.queryParams("description");
-
+                    int eventOwner = Integer.valueOf(request.queryParams("eventOwner"));
+                    createEvent(conn, name, location, time, date, image, description, eventOwner);
+                    return "";
                 })
         );
+
 //        Spark.post(
 //                "/create-message",
 //                ((request, response) -> {
