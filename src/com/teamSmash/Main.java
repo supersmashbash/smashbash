@@ -5,8 +5,6 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 
 import jodd.json.JsonSerializer;
@@ -258,14 +256,10 @@ public class Main {
         return event;
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ParseException {
         Connection conn = DriverManager.getConnection("jdbc:h2:./main");
         deleteTables(conn);
         createTables(conn);
-        //createEvent(conn, "event1", "folly beach", LocalTime.now(), LocalDate.now(), "https://www.google.com/search?q=beach+party&espv=2&biw=1366&bih=597&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjJzpTur6fLAhXF7iYKHS3-AywQ_AUIBigB#imgrc=NeFWZwo9gu3qVM%3A", "beach party", 1);
-
-        //createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
-        //createEvent(conn, "event", "place", LocalTime.now(), LocalDate.now(), "image", "descrip", 1);
 
         Spark.externalStaticFileLocation("public");
 
