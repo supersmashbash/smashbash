@@ -8,7 +8,9 @@ var page = {
   // url: "http://tiny-tiny.herokuapp.com/collections/hbd",
   url: {
     login: "/login",
-    logout: "/logout"
+    logout: "/logout",
+    events: "/events",
+    createEvent: "/createEvent"
     //need to add 'create events' route
   },
   init: function(){
@@ -24,6 +26,9 @@ var page = {
     $('.new-events-button').on('click', page.hideUserPageAgain); //toggling
     $('.create-event-button').on('click', page.createEvent); //submiting 'create events' form
     $('.my-events-button').on('click', page.getStoredEvents); //showing 'my events
+    $('.back-button-user').on('click', page.backButtonUser);
+    $('.back-button-post').on('click', page.backButtonPost);
+    $('.sign-out-button').on('click', ($.post(page.url.logout)));
   },
 
   //CREATE USERNAME AND PASSWORD
@@ -89,6 +94,15 @@ var page = {
     $('.post-event-container').addClass('inactive');
   },
 
+  backButtonUser: function () {
+    $('.user-page').removeClass('inactive');
+    $('.user-events-container').addClass('inactive');
+  },
+
+  backButtonPost: function () {
+    $('.user-page').removeClass('inactive');
+    $('.post-event-container').addClass('inactive');
+  },
 
   // AJAX
 
@@ -103,20 +117,6 @@ var page = {
       },
       error: function (err) {
         console.log ("error", err);
-      }
-    });
-  },
-
-  logoutOfServer: function(usernameLogout) {
-    $.ajax({
-      url: page.url.logout,
-      method: 'POST',
-      data: usernameLogout,
-      success: function() {
-        $('.sign-out-button').on('click', page.showLoginPage);
-      },
-      error: function (err) {
-        console.error("error", err);
       }
     });
   },
@@ -142,14 +142,14 @@ var page = {
       eventLocation: eventLocation,
       time: time,
       date: date,
-      description: descrip,
       image: img,
+      description: descrip,
     };
   },
   storeEvent: function (eventInfo) {
     $.ajax ({
       method: 'POST',
-      url: 'http://tiny-tiny.herokuapp.com/collections/create-events',
+      url: page.url.createEvent,
       data: eventInfo,
       success: function (eventInfo) {
         console.log ("CREATED EVENT", eventInfo);
@@ -174,7 +174,7 @@ var page = {
   getStoredEvents: function (){
     $.ajax ({
       method: 'GET',
-      url: 'http://tiny-tiny.herokuapp.com/collections/create-events',
+      url: page.url.createEvent,
       success: function (eventInfo) {
         console.log ("RECEIVED EVENTS", eventInfo);
         page.addMyEventsToDom(eventInfo);

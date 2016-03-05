@@ -334,8 +334,17 @@ public class Main {
 
                     String name = request.queryParams("eventName");
                     String location = request.queryParams("eventLocation");
-                    String time = request.queryParams("time");
-                    String date = request.queryParams("date");
+                    LocalDate date = null;
+                    LocalTime time = null;
+                    if(!request.queryParams("time").equals("")){
+                        time = LocalTime.parse(request.queryParams("time"));
+                    }
+
+                    if(!request.queryParams("date").equals("")){
+                        date = LocalDate.parse(request.queryParams("date"));
+                    }
+//                    LocalTime time = LocalTime.parse(request.queryParams("time"));
+//                    LocalDate date = LocalDate.parse(request.queryParams("date"));
                     String image = request.queryParams("image");
                     String description = request.queryParams("description");
                     createEvent(conn, name, location, time, date, image, description, userId);
