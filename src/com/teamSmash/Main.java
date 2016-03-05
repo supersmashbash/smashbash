@@ -44,7 +44,6 @@ public class Main {
                                   String date, String image, String description, int accountId) throws SQLException, ParseException {
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO event VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         //prepare a time formatter
-//        String dateInString = new java.text.SimpleDateFormat("MM/dd/yyyy").format(date);
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         Date parsedDate = new java.sql.Date(formatter.parse(date).getTime());
 
