@@ -137,7 +137,7 @@ public class Main {
     //I hope that this method is limiting output to dates from the current date to three months from the current date.
     //Returns an ArrayList of all the events in the DB
     public static ArrayList<Event> selectEvents(Connection conn) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE event_date BETWEEN CURRENT_DATE AND DATEADD(MONTH, 3, CURRENT_DATE )");
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE event_date BETWEEN CURRENT_DATE AND DATEADD(MONTH, 12, CURRENT_DATE )");
         ResultSet results = stmt.executeQuery();
 
         ArrayList<Event> eventList = new ArrayList<>();
@@ -249,8 +249,12 @@ public class Main {
         String image = results.getString(6);
         String description = results.getString(7);
         int accountId = results.getInt(8);
-        Event event = new Event(id, name, location, time, date.toLocalDate(), image, description, accountId);
-      //  public Event(int id, String name, String location, String time, LocalDate date, String image, String description, int eventOwner) {
+
+        //format date back into a string
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+        String dateString = df.format(date);
+
+        Event event = new Event(id, name, location, time, dateString, image, description, accountId);
         return event;
     }
 
