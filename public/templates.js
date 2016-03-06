@@ -1,6 +1,6 @@
 var templates = {};
   templates.events = [
-    "<div class = 'my-event' data-id = '<%= id %>'>", //REMOVE THE UNDERSCORE ON ID WHEN USING ROUTES
+    "<div class = 'my-event' data-id = '<%= userName%>'>", //REMOVE THE UNDERSCORE ON ID WHEN USING ROUTES
     "<img src = '<%= image %>'>",
     "<h6 id = 'event-name'> <%= name %> </h6>",
     "<h6 id = 'event-location'> <%= location %> </h6>",

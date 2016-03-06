@@ -12,7 +12,6 @@ var page = {
     logout: "/logout",
     events: "/events",
     createEvent: "/createEvent",
-    addEvent: "/addEventAttending",
     myEvents: "/accountEventsCreated",
     savedEvents: "/accountEventsAttending",
     delete:"/deleteEvent"
@@ -33,7 +32,7 @@ setInterval(function(){page.getAllStoredEvents();}, 1000);
     $('.my-events-button').on('click', page.getMyStoredEvents); //showing 'my created events
     $('.my-events-button').on('click', page.getMySavedEvents); //showing 'my saved events
     $('.event-container').on('click', '#attending-button', page.saveEvent); // saving attending events
-    $('.event-container').on('click', '#delete-button', page.deleteEvent); // deleting
+    $('.event-container').on('click', '#delete-button', page.deleteEvent); // delete events
     $('.back-button-user').on('click', page.backButtonUser);
     $('.back-button-post').on('click', page.backButtonPost);
     $('.sign-out-button').on('click', ($.post(page.url.logout)) && page.signOutButton);
@@ -178,19 +177,43 @@ setInterval(function(){page.getAllStoredEvents();}, 1000);
     });
   },
 
-    getMySavedEvents: function (){
-      $.ajax ({
-        method: 'GET',
-        url: page.url.savedEvents,
-        success: function (eventInfo) {
-          var eventI = JSON.parse(eventInfo);
-          page.addEventsToDom(eventI, $('.saved-events'), templates.savedEvents);
-        },
-        error: function (err) {
-          console.log("DID NOT RECEIVE EVENTS", err);
-        }
-      });
-    },
+//SAVING EVENTS
+saveEvent: function (event) {
+  event.preventDefault();
+  var id = ($(this).data('id'));
+  var filteredEvents = allData.filter(function (el) {
+    return id === el.id;
+    });
+  },
+  // console.log (filteredEvents);
+  storeSavedEvents: function (eventInfo) {
+    $.ajax ({
+      method: 'POST',
+      url: page.url.savedEvents,
+      data: eventInfo,
+      success: function (filteredEvents) {
+        console.log ("SUCCESS");
+      },
+      error: function (err) {
+        console.log ("creating event not working", err);
+      },
+    });
+  },
+
+  getMySavedEvents: function (){
+    $.ajax ({
+      method: 'GET',
+      url: page.url.savedEvents,
+      success: function (eventInfo) {
+        var eventI = JSON.parse(eventInfo);
+        page.addEventsToDom(eventI, $('.saved-events'), templates.savedEvents);
+      },
+      error: function (err) {
+        console.log("DID NOT RECEIVE EVENTS", err);
+      }
+    });
+  },
+
 
 //STORING AND DISPLAYING EVENTS
 
@@ -251,26 +274,6 @@ deleteEventFromStorage: function (eventId){
     data: {eventId: eventId},
     success: function () {
           console.log ('deleted event');
-    }
-  });
-},
-
-//SAVING EVENTS
-
-saveEvent: function () {
-  event.preventDefault();
-  var eventId = ($(this).data('id'));
-  console.log (eventId);
-  page.saveEventInStorage(eventId);
-},
-
-saveEventInStorage: function (eventId) {
-  $.ajax({
-    method:'POST',
-    url: page.url.addEvent,
-    data: {eventId: eventId},
-    success: function () {
-          console.log ('saved event');
     }
   });
 },
