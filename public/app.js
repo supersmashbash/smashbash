@@ -5,27 +5,29 @@ $(document).ready(function(){
 var userName = "";
 
 var page = {
-  // url: "http://tiny-tiny.herokuapp.com/collections/hbd",
   url: {
     login: "/login",
     logout: "/logout",
     events: "/events",
-    createEvent: "/createEvent"
-    //need to add 'create events' route
+    createEvent: "/createEvent",
+    myEvents: "/accountEventsCreated",
+    savedEvents: "/accountEventsAttending"
   },
   init: function(){
     page.styling();
     page.events();
   },
   styling: function(){
-    page.getStoredEvents();
+    page.getAllStoredEvents();
   },
   events: function() {
     $('.create-button').on('click', page.storingUserName);
     $('.my-events-button').on('click', page.hideUserPage); //toggling
     $('.new-events-button').on('click', page.hideUserPageAgain); //toggling
     $('.create-event-button').on('click', page.createEvent); //submiting 'create events' form
-    // $('.my-events-button').on('click', page.getStoredEvents); //showing 'my events
+    $('.my-events-button').on('click', page.getMyStoredEvents); //showing 'my events
+    $('.my-events-button').on('click', page.getMySavedEvents); //showing 'my events
+    $('.event-container').on('click', '#attending-button', page.saveEvent); // showing 'events'
     $('.back-button-user').on('click', page.backButtonUser);
     $('.back-button-post').on('click', page.backButtonPost);
     $('.sign-out-button').on('click', ($.post(page.url.logout)) && page.signOutButton);
@@ -42,7 +44,6 @@ var page = {
       var password = $('input[name="create-user-password"]').val();
       return password;
   },
-
 
   storingUserName: function() { //storing username & password in Server
     event.preventDefault();
@@ -139,7 +140,6 @@ var page = {
   createEvent: function () {
     event.preventDefault();
     var eventInfo = page.getEventInfo();
-    console.log (eventInfo);
     page.storeEvent(eventInfo);
   },
 
@@ -173,24 +173,44 @@ var page = {
     });
   },
 
-//MY EVENTS
+//SAVING EVENTS
+saveEvent: function () {
+  event.preventDefault();
+  var eventInfo = page.getAllStoredEvents();
+  console.log (eventInfo);
+  page.storeSavedEvent();
+},
+
+storeSavedEvent: function () {
+  $.ajax ({
+    method: 'POST',
+    url: page.url.savedEvents,
+    data: eventInfo,
+    success: function (eventInfo) {
+      console.log ("SAVED EVENT" + eventInfo);
+    }
+  });
+},
+
+//STORING AND DISPLAYING EVENTS
 
 
-  addMyEventsToDom: function (eventInfo) {
-    $('.created-events').html("");
-    var tmpl = _.template(templates.events);
+  addEventsToDom: function (eventInfo, $target, template) {
+    $($target).html("");
+    var tmpl = _.template(template);
     eventInfo.forEach (function (evt) {
-      $('.event-container').append(tmpl(evt));
+      $($target).append(tmpl(evt));
     });
   },
-  getStoredEvents: function (){
+
+// All Events
+  getAllStoredEvents: function (){
     $.ajax ({
       method: 'GET',
       url: page.url.events,
       success: function (eventInfo) {
-        console.log ("RECEIVED EVENTS", JSON.parse(eventInfo));
         var eventI = JSON.parse(eventInfo);
-        page.addMyEventsToDom(eventI);
+        page.addEventsToDom(eventI, $('.event-container'),templates.events);
       },
       error: function (err) {
         console.log("DID NOT RECEIVE EVENTS", err);
@@ -198,7 +218,36 @@ var page = {
     });
   },
 
-//ALL EVENTS
+//My Events
+getMyStoredEvents: function (){
+  $.ajax ({
+    method: 'GET',
+    url: page.url.myEvents,
+    success: function (eventInfo) {
+      var eventI = JSON.parse(eventInfo);
+      console.log (eventI);
+      page.addEventsToDom(eventI, $('.created-events'), templates.events);
+    },
+    error: function (err) {
+      console.log("DID NOT RECEIVE EVENTS", err);
+    }
+  });
+},
+
+//Saved Events
+getMySavedEvents: function (){
+  $.ajax ({
+    method: 'GET',
+    url: page.url.savedEvents,
+    success: function (eventInfo) {
+      var eventI = JSON.parse(eventInfo);
+      page.addEventsToDom(eventI, $('.saved-events'), templates.savedEvents);
+    },
+    error: function (err) {
+      console.log("DID NOT RECEIVE EVENTS", err);
+    }
+  });
+},
 
 
 }; //end of page init
