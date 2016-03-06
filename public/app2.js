@@ -21,8 +21,8 @@ var page = {
     page.events();
   },
   styling: function(){
-
-setInterval(function(){page.getAllStoredEvents();}, 1000);
+page.getAllStoredEvents();
+// setInterval(function(){page.getAllStoredEvents();}, 1000);
   },
   events: function() {
     $('.create-button').on('click', page.storingUserName);
