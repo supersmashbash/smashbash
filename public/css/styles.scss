@@ -2,9 +2,14 @@
   display: none;
 }
 
+body {
+  background-color: #E9EAEA;
+}
+
 nav {
-  background-color: lightgrey;
+  background-color: #36414A;
   height: 65px;
+  color: #E9EAEA;
   h1 {
     display: inline-block;
     float: left;
@@ -19,11 +24,11 @@ nav {
   }
 }
 .event-container {
-  background-color: grey;
+  background-color: #C8C6B9;
   width: 75%;
   margin: 0 auto;
   height: 500px;
-  padding: 15px;
+  padding: 45px;
   h2 {
     margin: 0;
   }
@@ -44,6 +49,28 @@ nav {
     display: block;
     width: 100%;
   }
+}
+
+.my-event {
+display: inline-block;
+background-color: #E8E8E8;
+padding: 15px;
+vertical-align: top;
+width: 27%;
+margin-right: 44px;
+  img {
+  width: 100%; }
+  #event-name {
+    font-size: 1.5em;
+    margin: 0;
+  }
+  #event-location {
+    font-size: 1em;
+    margin: 0;
+  }
+}
+.my-event:nth-child(3n+3) {
+  margin-right: 0;
 }
 
 footer {
