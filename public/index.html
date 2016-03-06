@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="css/styles.css" media="screen" title="no title" charset="utf-8">
 </head>
 <body>
+
+
 <section class= "login-page">
   <nav>
     <h1>smashbash</h1>
@@ -14,7 +16,7 @@
     <form class="create-user-form">
       <input type="text" name="create-user-login" value="" placeholder="username">
       <input type="text" name="create-user-password" value="" placeholder="password">
-      <input type="button" name="create-button" value="create" class = "create-button">
+      <input type="button" name="create-button" value="sign in" class = "create-button">
     </form>
 
   </nav>
@@ -22,6 +24,8 @@
 
   </div>
 </section>
+
+
 <section class = "user-page inactive ">
   <nav>
     <h1>smashbash</h1>
@@ -33,22 +37,32 @@
   </nav>
   <div class="event-container">
           <h2 id="welcome-message">Hello, </h2>
-
+  </div>
 </section>
+
+
 <section class= "user-events-container inactive">
   <nav>
     <h1>smashbash</h1>
     <input type="button" name="back-button" value="back" class="back-button-user">
     <input type="button" name="sign-out-button" value="sign-out" class="sign-out-button">
-
   </nav>
-  <div class="saved-events">
+  <div class="my-events-container">
+    <h1>Saved Events:</h1>
 
+    <div class="saved-events">
+
+    </div>
+      <h1>Created Events:</h1>
+    <div class="created-events">
+
+
+    </div>
   </div>
-  <div class="created-events">
-
   </div>
 </section>
+
+
 <section class="post-event-container inactive">
   <nav>
     <h1>smashbash</h1>
@@ -67,6 +81,8 @@
       <input type="button" name="create-event-button" value="create event" class ="create-event-button">
   </form>
 </section>
+
+
 <!-- <footer></footer> -->
 <script src="bower_components/jquery/dist/jquery.js" charset="utf-8"></script>
 <script src="bower_components/underscore/underscore.js" charset="utf-8"></script>

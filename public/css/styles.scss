@@ -23,11 +23,11 @@ nav {
     margin-top: 19px;
   }
 }
+
 .event-container {
   background-color: #C8C6B9;
   width: 75%;
   margin: 0 auto;
-  height: 500px;
   padding: 45px;
   h2 {
     margin: 0;
@@ -68,11 +68,33 @@ margin-right: 44px;
     font-size: 1em;
     margin: 0;
   }
+  #attending-button {
+    margin: 0;
+    display: inline-block;
+    background-color: #848381;
+    padding: 8px;
+    color: white;
+    cursor: pointer;
+  }
 }
 .my-event:nth-child(3n+3) {
   margin-right: 0;
 }
 
+
+.my-events-container {
+  background-color: #C8C6B9;
+  width: 75%;
+  margin: 0 auto;
+  padding: 45px;
+}
+
+// hiding 'attend' button on login pag
+.login-page {
+  #attending-button {
+    display: none;
+  }
+}
 footer {
   background-color: lightgrey;
   height: 75px;

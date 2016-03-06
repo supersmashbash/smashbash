@@ -25,7 +25,6 @@ nav form {
   background-color: #C8C6B9;
   width: 75%;
   margin: 0 auto;
-  height: 500px;
   padding: 45px; }
 
 .event-container h2 {
@@ -64,8 +63,24 @@ nav form {
   font-size: 1em;
   margin: 0; }
 
+.my-event #attending-button {
+  margin: 0;
+  display: inline-block;
+  background-color: #848381;
+  padding: 8px;
+  color: white; }
+
 .my-event:nth-child(3n+3) {
   margin-right: 0; }
+
+.my-events-container {
+  background-color: #C8C6B9;
+  width: 75%;
+  margin: 0 auto;
+  padding: 45px; }
+
+.login-page #attending-button {
+  display: none; }
 
 footer {
   background-color: lightgrey;
