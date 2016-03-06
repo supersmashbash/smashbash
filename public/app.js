@@ -33,6 +33,7 @@ var page = {
     $('.back-button-user').on('click', page.backButtonUser);
     $('.back-button-post').on('click', page.backButtonPost);
     $('.sign-out-button').on('click', ($.post(page.url.logout)) && page.signOutButton);
+    $('#attending-button').on('click', page.storeSavedEvents);
   },
 
   //CREATE USERNAME AND PASSWORD
@@ -73,10 +74,6 @@ var page = {
       username: username,
       password: password
     };
-  },
-
-  function reset() {
-    document.getElementById('#to-clear-user-form').value='';
   },
 
 //BACK BUTTONS
@@ -179,15 +176,16 @@ var page = {
   },
 
 //SAVING EVENTS
-saveEvent: function () {
+saveEvent: function (event) {
   event.preventDefault();
   var id = ($(this).data('id'));
   var filteredEvents = allData.filter(function (el) {
     return id === el.id;
     });
+  },
   // console.log (filteredEvents);
-  function storeSavedEvents () {
-    ajax ({
+  storeSavedEvents: function (eventInfo) {
+    $.ajax ({
       method: 'POST',
       url: page.url.savedEvents,
       data: eventInfo,
@@ -198,8 +196,7 @@ saveEvent: function () {
         console.log ("creating event not working", err);
       },
     });
-  }
-},
+  },
 
 
 //STORING AND DISPLAYING EVENTS
