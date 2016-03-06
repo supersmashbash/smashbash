@@ -239,6 +239,22 @@ public class Main {
         return accountId;
     }
 
+    public static ArrayList<Event> searchEvents(Connection conn, String searchString) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE even_name LIKE LOWER(?)");
+        stmt.setString(1, "%" + searchString + "%");  //these %'s can not be in the prepare statement part for whatever reason
+
+        ResultSet results = stmt.executeQuery();
+
+        ArrayList<Event> eventsListSearched = new ArrayList<>();
+        while (results.next()) {
+            Event event = buildEventFromDb(results);
+            eventsListSearched.add(event);
+        }
+
+        return eventsListSearched;
+
+    }
+
     //just broke the logic up here a little bit.
     //This just takes runs in a resultSet while loop and taks the data from the RS and builds it into an Event object and returns that.
     public static Event buildEventFromDb(ResultSet results) throws SQLException {
@@ -287,7 +303,7 @@ public class Main {
         Spark.get(
                 "/event",
                 ((request, response) -> {
-                    int eventId = Integer.valueOf(request.queryParams("id")) ;
+                    int eventId = Integer.valueOf(request.queryParams("eventId")) ;
 
                     JsonSerializer s = new JsonSerializer();
                     return s.serialize(selectEvent(conn, eventId));
@@ -299,7 +315,7 @@ public class Main {
                 "/accountEventsCreated",
                 ((request1, response1) -> {
                     Session session = request1.session();
-                    String name = session.attribute("userName");
+                    String name = session.attribute("accountName");
 
                     int accountId = selectAccountId(conn, name);
 
@@ -314,7 +330,7 @@ public class Main {
                 "/accountEventsAttending",
                 ((request1, response1) -> {
                     Session session = request1.session();
-                    String name = session.attribute("userName");
+                    String name = session.attribute("accountName");
 
                     int accountId = selectAccountId(conn, name);
 
@@ -323,6 +339,16 @@ public class Main {
 
                 })
 
+        );
+
+        Spark.get(
+                "/searchEvents",
+                ((request2, response2) -> {
+                    String searchString = request2.queryParams("searchString");
+
+                    JsonSerializer s = new JsonSerializer();
+                   return s.serialize(searchEvents(conn, searchString));
+                })
         );
 
 
@@ -361,8 +387,8 @@ public class Main {
                 ((request, response) -> {
                     Session session = request.session();
 
-                    String userName = session.attribute("accountName");
-                    int userId = selectAccountId(conn, userName);
+                    String accountName = session.attribute("accountName");
+                    int userId = selectAccountId(conn, accountName);
 
                     String name = request.queryParams("eventName");
                     String location = request.queryParams("eventLocation");
@@ -378,8 +404,9 @@ public class Main {
 
                     String image = request.queryParams("image");
                     String description = request.queryParams("description");
-                    createEvent(conn, name, location, timeString, date, image, description, userId);
-                    return "";
+                    int eventId = createEvent(conn, name, location, timeString, date, image, description, userId);
+                    response.status(201);
+                    return eventId;
                 })
         );
 
