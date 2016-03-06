@@ -1,7 +1,6 @@
 package com.teamSmash;
 
 import org.junit.Test;
-import spark.Session;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,9 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -60,7 +57,7 @@ public class MainTest {
 
 
        // int affected = Main.mapUserToEvent(connection, 1, 1);
-        ArrayList<AccountEvents> accountEventList = Main.getAccountEvents(connection, 1);
+        ArrayList<AccountEvents> accountEventList = Main.selectAccountEvents(connection, 1);
 
         endConnection(connection);
         assertTrue(accountEventList.get(0).getAccount().getName().equals("bob"));
@@ -131,7 +128,7 @@ public class MainTest {
 
         Main.createAccount(conn, "bob", "bobby");
 
-        int id = Main.getAccountId(conn, "bob");
+        int id = Main.selectAccountId(conn, "bob");
 
         assertTrue(id == 1);
     }

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import jodd.json.JsonSerializer;
 import spark.Session;
 import spark.Spark;
-import java.util.*;
 
 public class Main {
 
@@ -205,7 +204,7 @@ public class Main {
     //once i know this works i can take some of the SQL out. I'm currently getting more fields than i actually need.
     //this method will take a account ID number and it will return an arraylist of all of the events they are attending
     // (in a special class made for that purpose)
-    public static ArrayList<AccountEvents> getAccountEvents(Connection conn, int accountId) throws SQLException {
+    public static ArrayList<AccountEvents> selectAccountEvents(Connection conn, int accountId) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT m.event_id, e.event_name " +
                                                         "FROM account_event_map m " +
                                                         "INNER JOIN event e ON m.event_id = e.event_id " +
@@ -227,7 +226,7 @@ public class Main {
     }
 
 
-    public static int getAccountId(Connection conn, String name) throws SQLException {
+    public static int selectAccountId(Connection conn, String name) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT account_id FROM account WHERE account_name = ?");
         stmt.setString(1, name);
         ResultSet results = stmt.executeQuery();
@@ -238,6 +237,22 @@ public class Main {
         }
 
         return accountId;
+    }
+
+    public static ArrayList<Event> searchEvents(Connection conn, String searchString) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE even_name LIKE LOWER(?)");
+        stmt.setString(1, "%" + searchString + "%");  //these %'s can not be in the prepare statement part for whatever reason
+
+        ResultSet results = stmt.executeQuery();
+
+        ArrayList<Event> eventsListSearched = new ArrayList<>();
+        while (results.next()) {
+            Event event = buildEventFromDb(results);
+            eventsListSearched.add(event);
+        }
+
+        return eventsListSearched;
+
     }
 
     //just broke the logic up here a little bit.
@@ -288,7 +303,7 @@ public class Main {
         Spark.get(
                 "/event",
                 ((request, response) -> {
-                    int eventId = Integer.valueOf(request.queryParams("id")) ;
+                    int eventId = Integer.valueOf(request.queryParams("eventId")) ;
 
                     JsonSerializer s = new JsonSerializer();
                     return s.serialize(selectEvent(conn, eventId));
@@ -300,9 +315,9 @@ public class Main {
                 "/accountEventsCreated",
                 ((request1, response1) -> {
                     Session session = request1.session();
-                    String name = session.attribute("userName");
+                    String name = session.attribute("accountName");
 
-                    int accountId = getAccountId(conn, name);
+                    int accountId = selectAccountId(conn, name);
 
 
                     JsonSerializer s = new JsonSerializer();
@@ -315,15 +330,25 @@ public class Main {
                 "/accountEventsAttending",
                 ((request1, response1) -> {
                     Session session = request1.session();
-                    String name = session.attribute("userName");
+                    String name = session.attribute("accountName");
 
-                    int accountId = getAccountId(conn, name);
+                    int accountId = selectAccountId(conn, name);
 
                     JsonSerializer s = new JsonSerializer();
-                   return s.serialize(getAccountEvents(conn, accountId));
+                   return s.serialize(selectAccountEvents(conn, accountId));
 
                 })
 
+        );
+
+        Spark.get(
+                "/searchEvents",
+                ((request2, response2) -> {
+                    String searchString = request2.queryParams("searchString");
+
+                    JsonSerializer s = new JsonSerializer();
+                   return s.serialize(searchEvents(conn, searchString));
+                })
         );
 
 
@@ -344,12 +369,12 @@ public class Main {
                     Session session = request.session();
 
                     if ( (account != null) && (password.equals(account.getPassword())) ) {  //if exist and the pass matches
-                        int id = getAccountId(conn, name);
+                        int id = selectAccountId(conn, name);
                         session.attribute("accountName", name);
                         return serializer.serialize(selectAccount(conn, id));
                     } else if (account == null) {   //if the user does not yet exist, create it
                         createAccount(conn, name, password);
-                        int id = getAccountId(conn, name);
+                        int id = selectAccountId(conn, name);
                         session.attribute("accountName", name);
                         return serializer.serialize(selectAccount(conn, id));
                     } else {
@@ -362,25 +387,26 @@ public class Main {
                 ((request, response) -> {
                     Session session = request.session();
 
-                    String userName = session.attribute("accountName");
-                    int userId = getAccountId(conn, userName);
+                    String accountName = session.attribute("accountName");
+                    int userId = selectAccountId(conn, accountName);
 
                     String name = request.queryParams("eventName");
                     String location = request.queryParams("eventLocation");
                     String date = null;
-                    String time = null;
+                    String timeString = null;
                     if(!request.queryParams("time").equals("")){
-                        time = request.queryParams("time");
+                        timeString = request.queryParams("time"); //get the time that is a string
+                        timeString = formatTime(timeString); //run method to convert string to object, format, and return as string
                     }
-
                     if(!request.queryParams("date").equals("")){
                         date = request.queryParams("date");
                     }
 
                     String image = request.queryParams("image");
                     String description = request.queryParams("description");
-                    createEvent(conn, name, location, time, date, image, description, userId);
-                    return "";
+                    int eventId = createEvent(conn, name, location, timeString, date, image, description, userId);
+                    response.status(201);
+                    return eventId;
                 })
         );
 
@@ -391,7 +417,7 @@ public class Main {
                     String accountName = session.attribute("accountName");
                     int eventId = Integer.parseInt(request1.queryParams("eventId"));
 
-                    mapUserToEvent(conn, getAccountId(conn, accountName), eventId);
+                    mapUserToEvent(conn, selectAccountId(conn, accountName), eventId);
                     return "";
                 })
         );
@@ -404,9 +430,10 @@ public class Main {
                     String name = request.queryParams("eventName");
                     String location = request.queryParams("eventLocation");
                     String date = null;
-                    String time = null;
+                    String timeString = null;
                     if(!request.queryParams("time").equals("")){
-                        time = request.queryParams("time");
+                        timeString = request.queryParams("time"); //get the time that is a string
+                        timeString = formatTime(timeString); //run method to convert string to object, format, and return as string
                     }
                     if(!request.queryParams("date").equals("")){
                         date = request.queryParams("date");
@@ -414,7 +441,7 @@ public class Main {
                     String image = request.queryParams("image");
                     String description = request.queryParams("description");
                     int accountId = Integer.valueOf(request.queryParams("accountId"));
-                    editEvent(conn, eventId, name, location, time, date, image, description, accountId);
+                    editEvent(conn, eventId, name, location, timeString, date, image, description, accountId);
                     return "";
                 })
         );
@@ -436,5 +463,16 @@ public class Main {
                     return "";
                 })
         );
+    }
+
+    //method to get a time string and format it the way we want it
+    public static String formatTime(String timeString) throws ParseException {
+        //get the string and convert it to a time object
+        SimpleDateFormat formatterToTime = new SimpleDateFormat("HH:mm");
+        Time parsedTime = new java.sql.Time(formatterToTime.parse(timeString).getTime());
+
+        //format the object the way we want and return it back as a string again.
+        SimpleDateFormat formatterToString = new SimpleDateFormat("hh:mm a z");
+       return formatterToString.format(parsedTime);
     }
 }
