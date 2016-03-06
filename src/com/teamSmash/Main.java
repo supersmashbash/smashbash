@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import jodd.json.JsonSerializer;
 import spark.Session;
@@ -22,6 +23,7 @@ public class Main {
         stmt.close();
     }
 
+    //this is just to be used while testing
     public static void deleteTables(Connection conn) throws SQLException {
         Statement stmt = conn.createStatement();
         stmt.execute("DROP TABLE account");
@@ -47,7 +49,7 @@ public class Main {
 
         stmt.setString(1, name);
         stmt.setString(2, location);
-        stmt.setString(3, time);  //here I am needing to convert a LocalTime object into a Time object with the DB will accept more freely. I think.
+        stmt.setString(3, time);
         stmt.setDate(4, (parsedDate));  //same here but for Date.
         stmt.setString(5, image);
         stmt.setString(6, description);
@@ -108,9 +110,11 @@ public class Main {
 
         if (result.next()) {
             Account account = new Account(result.getInt(1), result.getString(2), result.getString(3));
+            stmt.close();
             return account;
         } else {
             Account account = null;
+            stmt.close();
             return account;
         }
     }
@@ -124,9 +128,11 @@ public class Main {
 
         if (result.next()) {
             Account account = new Account(result.getInt(1), result.getString(2), result.getString(3));
+            stmt.close();
             return account;
         } else {
             Account account = null;
+            stmt.close();
             return account;
         }
     }
@@ -143,6 +149,7 @@ public class Main {
         while (results.next()) {
             eventList.add(buildEventFromDb(results));
         }
+        stmt.close();
         return eventList;
     }
 
@@ -154,8 +161,10 @@ public class Main {
 
         if (results.next()) {
             Event event = buildEventFromDb(results);
+            stmt.close();
             return event;
         } else {
+            stmt.close();
             return null;
         }
     }
@@ -181,9 +190,11 @@ public class Main {
         PreparedStatement stmt = conn.prepareStatement("DELETE FROM event WHERE event_id = ?");
         stmt.setInt(1, eventId);
         stmt.execute();
+        stmt.close();
         PreparedStatement stmtTwo = conn.prepareStatement("DELETE FROM account_event_map WHERE event_id = ?");
         stmtTwo.setInt(1, eventId);
         stmtTwo.execute();
+        stmtTwo.close();
     }
 
     public static void editEvent(Connection conn, int eventId, String name, String location, String time, String date, String image, String description, int accountId) throws SQLException {
@@ -199,6 +210,7 @@ public class Main {
         stmt.setInt(7, accountId);
         stmt.setInt(8, eventId);
         stmt.execute();
+        stmt.close();
     }
 
     //once i know this works i can take some of the SQL out. I'm currently getting more fields than i actually need.
@@ -222,6 +234,7 @@ public class Main {
             Event event = selectEvent(conn, eventId);
             accountEventsList.add(new AccountEvents(account, event));
         }
+        stmt.close();
         return accountEventsList;
     }
 
@@ -236,12 +249,14 @@ public class Main {
             accountId = results.getInt(1);
         }
 
+        stmt.close();
         return accountId;
     }
 
     public static ArrayList<Event> searchEvents(Connection conn, String searchString) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE even_name LIKE LOWER(?)");
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM event WHERE event_name LIKE LOWER(?) OR event_location LIKE LOWER(?)");
         stmt.setString(1, "%" + searchString + "%");  //these %'s can not be in the prepare statement part for whatever reason
+        stmt.setString(2, "%" + searchString + "%");
 
         ResultSet results = stmt.executeQuery();
 
@@ -251,6 +266,7 @@ public class Main {
             eventsListSearched.add(event);
         }
 
+        stmt.close();
         return eventsListSearched;
 
     }
@@ -277,7 +293,7 @@ public class Main {
 
     public static void main(String[] args) throws SQLException, ParseException {
         Connection conn = DriverManager.getConnection("jdbc:h2:./main");
-        deleteTables(conn);
+       // deleteTables(conn);
         createTables(conn);
 
         Spark.externalStaticFileLocation("public");
@@ -292,6 +308,7 @@ public class Main {
                     return s.serialize(selectAccounts(conn));
                 })
         );
+        //display ALL events in DB
         Spark.get(
                 "/events",
                 ((request, response) -> {
@@ -300,6 +317,7 @@ public class Main {
                 })
         );
 
+        //display a single event, this requires an eventId to be passed to it names eventId
         Spark.get(
                 "/event",
                 ((request, response) -> {
@@ -310,7 +328,7 @@ public class Main {
                 })
         );
 
-        //returns all events created by an account
+        //returns all events created by the currently logged in account, this has no requirements
         Spark.get(
                 "/accountEventsCreated",
                 ((request1, response1) -> {
@@ -325,7 +343,7 @@ public class Main {
                 })
         );
 
-        //returns all events an account is going to.
+        //returns all events the currently logged in account is going to.
         Spark.get(
                 "/accountEventsAttending",
                 ((request1, response1) -> {
@@ -341,6 +359,8 @@ public class Main {
 
         );
 
+        //searchs all the events in the DB based on a string query. Search the event name and event location fields
+        //this will require a string sent to it called searchString
         Spark.get(
                 "/searchEvents",
                 ((request2, response2) -> {
@@ -352,6 +372,7 @@ public class Main {
         );
 
 
+        //handles the login button
         Spark.post(
                 "/login",
                 ((request, response) -> {
@@ -363,6 +384,8 @@ public class Main {
 
                     JsonSerializer serializer = new JsonSerializer();
 
+                    HashMap<String, String> userNameMap = new HashMap<>(); //this is for sending to front end
+
 
 
                     //create a session
@@ -371,17 +394,24 @@ public class Main {
                     if ( (account != null) && (password.equals(account.getPassword())) ) {  //if exist and the pass matches
                         int id = selectAccountId(conn, name);
                         session.attribute("accountName", name);
-                        return serializer.serialize(selectAccount(conn, id));
+                        response.status(200);
+                        userNameMap.put("username", name);
+                        return serializer.serialize(userNameMap);
                     } else if (account == null) {   //if the user does not yet exist, create it
                         createAccount(conn, name, password);
                         int id = selectAccountId(conn, name);
+                        response.status(201);
                         session.attribute("accountName", name);
-                        return serializer.serialize(selectAccount(conn, id));
+                        userNameMap.put("username", name);
+                        return serializer.serialize(userNameMap);
                     } else {
-                        return "Password mismatch";
+                        response.status(401);
+                        userNameMap.put("username", "Password Mismatch");
+                        return serializer.serialize(userNameMap);
                     }
                 })
         );
+        //handles the create event button. this is only meant to work when a user is logged in. it will not work otherwise
         Spark.post(
                 "/createEvent",
                 ((request, response) -> {
@@ -404,12 +434,18 @@ public class Main {
 
                     String image = request.queryParams("image");
                     String description = request.queryParams("description");
-                    int eventId = createEvent(conn, name, location, timeString, date, image, description, userId);
-                    response.status(201);
+                    int eventId = -1;
+                    eventId = createEvent(conn, name, location, timeString, date, image, description, userId);
+                    if (eventId != -1) {
+                        response.status(201);
+                    } else {
+                        response.status(400);
+                    }
                     return eventId;
                 })
         );
 
+        //this method will add a user to the attending list of an event
         Spark.post(
                 "/addEventAttending",
                 ((request1, response1) -> {
@@ -417,11 +453,18 @@ public class Main {
                     String accountName = session.attribute("accountName");
                     int eventId = Integer.parseInt(request1.queryParams("eventId"));
 
-                    mapUserToEvent(conn, selectAccountId(conn, accountName), eventId);
+                    try {
+                        mapUserToEvent(conn, selectAccountId(conn, accountName), eventId);
+                    } catch (Exception e) {
+                        Spark.halt(400, "Error in /addEventAttending: " + e.getMessage());
+                    }
+
+
                     return "";
                 })
         );
 
+        //this will edit an event. It must be passed all the fields and a user must be logged in
         Spark.post(
                 "/editEvent",
                 ((request, response) -> {
@@ -441,25 +484,36 @@ public class Main {
                     String image = request.queryParams("image");
                     String description = request.queryParams("description");
                     int accountId = Integer.valueOf(request.queryParams("accountId"));
-                    editEvent(conn, eventId, name, location, timeString, date, image, description, accountId);
+                    try {
+                        editEvent(conn, eventId, name, location, timeString, date, image, description, accountId);
+                    } catch (Exception e) {
+                        Spark.halt(400, "Error in /editEvent " + e.getMessage());
+                    }
                     return "";
                 })
         );
 
+        //deletes an event, a eventId must be passed to it called eventId
         Spark.post(
                 "/deleteEvent",
                 ((request, response) -> {
                     int eventId = Integer.valueOf(request.queryParams("eventId"));
-                    deleteEvent(conn, eventId);
+                    try {
+                        deleteEvent(conn, eventId);
+                    } catch (Exception e) {
+                        Spark.halt(400, "error in /deleteEvent " + e.getMessage());
+                    }
                     return "";
                 })
         );
 
+        //logs out a user
         Spark.post(
                 "/logout",
                 ((request, response) -> {
                     Session session = request.session();
                     session.invalidate();
+
                     return "";
                 })
         );
