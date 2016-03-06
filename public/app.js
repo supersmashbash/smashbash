@@ -18,14 +18,14 @@ var page = {
     page.events();
   },
   styling: function(){
-
+    page.getStoredEvents();
   },
   events: function() {
     $('.create-button').on('click', page.storingUserName);
     $('.my-events-button').on('click', page.hideUserPage); //toggling
     $('.new-events-button').on('click', page.hideUserPageAgain); //toggling
     $('.create-event-button').on('click', page.createEvent); //submiting 'create events' form
-    $('.my-events-button').on('click', page.getStoredEvents); //showing 'my events
+    // $('.my-events-button').on('click', page.getStoredEvents); //showing 'my events
     $('.back-button-user').on('click', page.backButtonUser);
     $('.back-button-post').on('click', page.backButtonPost);
     $('.sign-out-button').on('click', ($.post(page.url.logout)) && page.signOutButton);
@@ -71,6 +71,8 @@ var page = {
       password: password
     };
   },
+
+//BACK BUTTONS
 
   // to see the my events page
   hideUserPage: function() {
@@ -178,9 +180,8 @@ var page = {
     $('.created-events').html("");
     var tmpl = _.template(templates.events);
     eventInfo.forEach (function (evt) {
-      $('.created-events').append(tmpl(evt));
+      $('.event-container').append(tmpl(evt));
     });
-    page.hideUserPage ();
   },
   getStoredEvents: function (){
     $.ajax ({
@@ -196,6 +197,8 @@ var page = {
       }
     });
   },
+
+//ALL EVENTS
 
 
 }; //end of page init

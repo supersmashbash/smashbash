@@ -1,9 +1,13 @@
 .inactive {
   display: none; }
 
+body {
+  background-color: #E9EAEA; }
+
 nav {
-  background-color: lightgrey;
-  height: 65px; }
+  background-color: #36414A;
+  height: 65px;
+  color: #E9EAEA; }
 
 nav h1 {
   display: inline-block;
@@ -18,11 +22,11 @@ nav form {
   margin-top: 19px; }
 
 .event-container {
-  background-color: grey;
+  background-color: #C8C6B9;
   width: 75%;
   margin: 0 auto;
   height: 500px;
-  padding: 15px; }
+  padding: 45px; }
 
 .event-container h2 {
   margin: 0; }
@@ -40,6 +44,28 @@ nav form {
 .create-event-form input[type="text"] {
   display: block;
   width: 100%; }
+
+.my-event {
+  display: inline-block;
+  background-color: #E8E8E8;
+  padding: 15px;
+  vertical-align: top;
+  width: 27%;
+  margin-right: 44px; }
+
+.my-event img {
+  width: 100%; }
+
+.my-event #event-name {
+  font-size: 1.5em;
+  margin: 0; }
+
+.my-event #event-location {
+  font-size: 1em;
+  margin: 0; }
+
+.my-event:nth-child(3n+3) {
+  margin-right: 0; }
 
 footer {
   background-color: lightgrey;
