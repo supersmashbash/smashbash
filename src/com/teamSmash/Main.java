@@ -25,9 +25,9 @@ public class Main {
 
     public static void deleteTables(Connection conn) throws SQLException {
         Statement stmt = conn.createStatement();
-        stmt.equals("DROP TABLE account");
-        stmt.equals("DROP TABLE event");
-        stmt.equals("DROP TABLE account_event_map");
+        stmt.execute("DROP TABLE account");
+        stmt.execute("DROP TABLE event");
+        stmt.execute("DROP TABLE account_event_map");
     }
 
     public static int createAccount(Connection conn, String name, String password) throws SQLException {
@@ -79,6 +79,7 @@ public class Main {
         stmt.execute();
         stmt.close();
     }
+
 
     //return an ArrayList of all accounts in the DB. Probably won't need this
     public static ArrayList<Account> selectAccounts(Connection conn) throws SQLException {
@@ -344,12 +345,12 @@ public class Main {
 
                     if ( (account != null) && (password.equals(account.getPassword())) ) {  //if exist and the pass matches
                         int id = getAccountId(conn, name);
-                        session.attribute("userName", name);
+                        session.attribute("accountName", name);
                         return serializer.serialize(selectAccount(conn, id));
                     } else if (account == null) {   //if the user does not yet exist, create it
                         createAccount(conn, name, password);
                         int id = getAccountId(conn, name);
-                        session.attribute("userName", name);
+                        session.attribute("accountName", name);
                         return serializer.serialize(selectAccount(conn, id));
                     } else {
                         return "Password mismatch";
@@ -361,7 +362,7 @@ public class Main {
                 ((request, response) -> {
                     Session session = request.session();
 
-                    String userName = session.attribute("userName");
+                    String userName = session.attribute("accountName");
                     int userId = getAccountId(conn, userName);
 
                     String name = request.queryParams("eventName");
@@ -382,14 +383,19 @@ public class Main {
                     return "";
                 })
         );
+
         Spark.post(
-                "/deleteEvent",
-                ((request, response) -> {
-                    int eventId = Integer.valueOf(request.queryParams("eventId"));
-                    deleteEvent(conn, eventId);
+                "/addEventAttending",
+                ((request1, response1) -> {
+                    Session session = request1.session();
+                    String accountName = session.attribute("accountName");
+                    int eventId = Integer.parseInt(request1.queryParams("eventId"));
+
+                    mapUserToEvent(conn, getAccountId(conn, accountName), eventId);
                     return "";
                 })
         );
+
         Spark.post(
                 "/editEvent",
                 ((request, response) -> {
@@ -412,6 +418,16 @@ public class Main {
                     return "";
                 })
         );
+
+        Spark.post(
+                "/deleteEvent",
+                ((request, response) -> {
+                    int eventId = Integer.valueOf(request.queryParams("eventId"));
+                    deleteEvent(conn, eventId);
+                    return "";
+                })
+        );
+
         Spark.post(
                 "/logout",
                 ((request, response) -> {
