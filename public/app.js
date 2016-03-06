@@ -178,41 +178,43 @@ setInterval(function(){page.getAllStoredEvents();}, 1000);
   },
 
 //SAVING EVENTS
-saveEvent: function (event) {
-  event.preventDefault();
-  var id = ($(this).data('id'));
-  var filteredEvents = allData.filter(function (el) {
-    return id === el.id;
-    });
-  },
-  // console.log (filteredEvents);
-  storeSavedEvents: function (eventInfo) {
-    $.ajax ({
-      method: 'POST',
-      url: page.url.savedEvents,
-      data: eventInfo,
-      success: function (filteredEvents) {
-        console.log ("SUCCESS");
-      },
-      error: function (err) {
-        console.log ("creating event not working", err);
-      },
-    });
-  },
+// saveEvent: function (event) {
+//   event.preventDefault();
+//   var id = ($(this).data('id'));
+//   var filteredEvents = allData.filter(function (el) {
+//     return id === el.id;
+//     });
+//   },
+//   // console.log (filteredEvents);
+//   storeSavedEvents: function (eventInfo) {
+//     $.ajax ({
+//       method: 'POST',
+//       url: page.url.savedEvents,
+//       data: eventInfo,
+//       success: function (filteredEvents) {
+//         console.log ("SUCCESS");
+//       },
+//       error: function (err) {
+//         console.log ("creating event not working", err);
+//       },
+//     });
+//   },
+//
+//   getMySavedEvents: function (){
+//     $.ajax ({
+//       method: 'GET',
+//       url: page.url.savedEvents,
+//       success: function (eventInfo) {
+//         var eventI = JSON.parse(eventInfo);
+//         page.addEventsToDom(eventI, $('.saved-events'), templates.savedEvents);
+//       },
+//       error: function (err) {
+//         console.log("DID NOT RECEIVE EVENTS", err);
+//       }
+//     });
+//   },
 
-  getMySavedEvents: function (){
-    $.ajax ({
-      method: 'GET',
-      url: page.url.savedEvents,
-      success: function (eventInfo) {
-        var eventI = JSON.parse(eventInfo);
-        page.addEventsToDom(eventI, $('.saved-events'), templates.savedEvents);
-      },
-      error: function (err) {
-        console.log("DID NOT RECEIVE EVENTS", err);
-      }
-    });
-  },
+
 
 
 //STORING AND DISPLAYING EVENTS
