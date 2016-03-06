@@ -73,6 +73,10 @@ var page = {
     };
   },
 
+  function reset() {
+    document.getElementById('#to-clear-user-form').value='';
+  },
+
 //BACK BUTTONS
 
   // to see the my events page
@@ -98,19 +102,18 @@ var page = {
   },
 
   // to go back to user page
-
   backButtonUser: function () {
     $('.user-page').removeClass('inactive');
     $('.user-events-container').addClass('inactive');
   },
 
   // to go back to post event page
-
   backButtonPost: function () {
     $('.user-page').removeClass('inactive');
     $('.post-event-container').addClass('inactive');
   },
 
+  // to go back to the login page
   signOutButton: function () {
     $('.user-page').addClass('inactive');
     $('.user-events-container').addClass('inactive');
