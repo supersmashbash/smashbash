@@ -33,6 +33,7 @@ var page = {
     $('.back-button-user').on('click', page.backButtonUser);
     $('.back-button-post').on('click', page.backButtonPost);
     $('.sign-out-button').on('click', ($.post(page.url.logout)) && page.signOutButton);
+    $('#attending-button').on('click', page.storeSavedEvents);
   },
 
   //CREATE USERNAME AND PASSWORD
@@ -100,19 +101,18 @@ var page = {
   },
 
   // to go back to user page
-
   backButtonUser: function () {
     $('.user-page').removeClass('inactive');
     $('.user-events-container').addClass('inactive');
   },
 
   // to go back to post event page
-
   backButtonPost: function () {
     $('.user-page').removeClass('inactive');
     $('.post-event-container').addClass('inactive');
   },
 
+  // to go back to the login page
   signOutButton: function () {
     $('.user-page').addClass('inactive');
     $('.user-events-container').addClass('inactive');
@@ -176,15 +176,16 @@ var page = {
   },
 
 //SAVING EVENTS
-saveEvent: function () {
+saveEvent: function (event) {
   event.preventDefault();
   var id = ($(this).data('id'));
   var filteredEvents = allData.filter(function (el) {
     return id === el.id;
     });
+  },
   // console.log (filteredEvents);
-  function storeSavedEvents () {
-    ajax ({
+  storeSavedEvents: function (eventInfo) {
+    $.ajax ({
       method: 'POST',
       url: page.url.savedEvents,
       data: eventInfo,
@@ -195,8 +196,7 @@ saveEvent: function () {
         console.log ("creating event not working", err);
       },
     });
-  }
-},
+  },
 
 
 //STORING AND DISPLAYING EVENTS
