@@ -95,19 +95,18 @@ var page = {
   },
 
   // to go back to user page
-
   backButtonUser: function () {
     $('.user-page').removeClass('inactive');
     $('.user-events-container').addClass('inactive');
   },
 
   // to go back to post event page
-
   backButtonPost: function () {
     $('.user-page').removeClass('inactive');
     $('.post-event-container').addClass('inactive');
   },
 
+  // to signout
   signOutButton: function () {
     $('.user-page').addClass('inactive');
     $('.user-events-container').addClass('inactive');
@@ -173,14 +172,13 @@ var page = {
 
 //MY EVENTS
 
-
   addMyEventsToDom: function (eventInfo) {
     $('.created-events').html("");
     var tmpl = _.template(templates.events);
     eventInfo.forEach (function (evt) {
       $('.created-events').append(tmpl(evt));
     });
-    page.hideUserPage ();
+    page.hideUserPage();
   },
   getStoredEvents: function (){
     $.ajax ({
@@ -196,6 +194,5 @@ var page = {
       }
     });
   },
-
 
 }; //end of page init
