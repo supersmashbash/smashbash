@@ -22,7 +22,7 @@ var page = {
     page.events();
   },
   styling: function(){
-
+    // page.getAllStoredEvents();
 setInterval(function(){page.getAllStoredEvents();}, 1000);
   },
   events: function() {
@@ -61,7 +61,9 @@ setInterval(function(){page.getAllStoredEvents();}, 1000);
     else {
       page.hideLoginPage();
       page.addNewUserPassToServer(page.getPasswordToStorage());
-      $("#welcome-message").append(page.getUserFromDom());
+      $("#welcome-message").html("Welcome " + page.getUserFromDom());
+      $('input[name="create-user-login"]').val('');
+      $('input[name="create-user-password"]').val('');
     }
   },
 
