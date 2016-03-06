@@ -24,6 +24,8 @@ var page = {
   styling: function(){
     // page.getAllStoredEvents();
 setInterval(function(){page.getAllStoredEvents();}, 1000);
+setInterval(function(){page.getMySavedEvents();}, 1000);
+setInterval(function(){page.getMyStoredEvents();}, 1000);
   },
   events: function() {
     $('.create-button').on('click', page.storingUserName);
@@ -34,6 +36,7 @@ setInterval(function(){page.getAllStoredEvents();}, 1000);
     $('.my-events-button').on('click', page.getMySavedEvents); //showing 'my saved events
     $('.event-container').on('click', '#attending-button', page.saveEvent); // saving attending events
     $('.event-container').on('click', '#delete-button', page.deleteEvent); // deleting
+    $('.created-events').on('click', '#delete-button', page.deleteEvent); // deleting
     $('.back-button-user').on('click', page.backButtonUser);
     $('.back-button-post').on('click', page.backButtonPost);
     $('.sign-out-button').on('click', ($.post(page.url.logout)) && page.signOutButton);

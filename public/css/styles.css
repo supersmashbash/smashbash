@@ -57,7 +57,9 @@ nav form {
   padding: 45px;
   padding-top: 0px;
  }
-
+.event-container #delete-button {
+  display: none;
+}
 .event-container h2 {
   margin: 0; }
 
@@ -69,7 +71,12 @@ nav form {
 
 .create-event-form {
   width: 35%;
-  margin: 0 auto; }
+  margin: 0 auto;
+  margin-top: 150px;
+  background: white;
+  padding: 36px;
+}
+}
 
 .create-event-form input[type="text"] {
   display: block;
@@ -138,6 +145,16 @@ nav form {
   float: right;
   margin-right: 25px;
   margin-top: 21px;
+}
+
+.post-event-container h1 {
+  margin: 0;
+  margin-left: 25px;
+  margin-top: 6px;
+}
+
+.post-event-container h2 {
+  margin: 0;
 }
 
 footer {
