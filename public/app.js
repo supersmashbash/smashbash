@@ -5,7 +5,6 @@ $(document).ready(function(){
 var userName = "";
 var allData = "";
 
-
 var page = {
   url: {
     login: "/login",
@@ -39,7 +38,8 @@ setInterval(function(){page.getMyStoredEvents();}, 1000);
     $('.event-container').on('click', '#attending-button', page.saveEvent); // saving attending events
     $('.event-container').on('click', '#delete-button', page.deleteEvent); // deleting
     $('.created-events').on('click', '#delete-button', page.deleteEvent); // deleting
-    $('.event-container').on('click', '#edit-button', page.hideUserPageAgain);
+    $('.created-events').on('click', '#edit-button', page.hideUserPageAgain); // edit button take you to create page
+    $('.created-events').on('click', '#edit-button', page.editEvent); // edit button hopefully edit
     $('.back-button-user').on('click', page.backButtonUser);
     $('.back-button-post').on('click', page.backButtonPost);
     $('.sign-out-button').on('click', ($.post(page.url.logout)) && page.signOutButton);
@@ -101,6 +101,7 @@ setInterval(function(){page.getMyStoredEvents();}, 1000);
   hideUserPageAgain: function() {
     $('.login-page').addClass('inactive');
     $('.user-page').addClass('inactive');
+    $('.user-events-container').addClass('inactive');
     $('.post-event-container').removeClass('inactive');
   },
 
@@ -290,18 +291,47 @@ editEvent: function(event){
   event.preventDefault();
   var eventId = ($(this).data('id'));
   var eventInfo = page.getEventInfo();
-  console.log (eventId);
+  console.log (eventId); // THIS LOGGING
   page.editEventInStorage(eventId);
+  var editedEvent = page.updateEvent(editedEvent);
 },
 
-editEventInStorage: function (eventId){
+editEventInStorage: function () {
+  var eventId = ($(this).data('id'));
+  var eventName = $('input[name="eventName"]').val();
+  $('input[name="eventName"]').val('');
+  var eventLocation = $('input[name="eventLocation"]').val();
+  $('input[name="eventLocation"]').val('');
+  var time = $('input[name="timeOfEvent"]').val();
+  $('input[name="timeOfEvent"]').val('');
+  var date = $('input[name="dateOfEvent"]').val();
+  $('input[name="dateOfEvent"]').val('');
+  var descrip = $('input[name="descripOfEvent"]').val();
+  $('input[name="descripOfEvent"]').val('');
+  var img = $('input[name="imgOfEvent"]').val();
+  $('input[name="imgOfEvent"]').val('');
+  return {
+    eventId: eventId,
+    eventName: eventName,
+    eventLocation: eventLocation,
+    time: time,
+    date: date,
+    image: img,
+    description: descrip,
+  };
+},
+
+updateEvent: function (editedEvent){
   $.ajax({
-    method: 'PUT',
+    method: 'POST',
     url: page.url.editTheEvent,
-    data: {eventId: eventId},
+    data: editedEvent,
     success: function(result){
       console.log ('edit event');
-    }
+    },
+    error: function (err){
+      console.log ('it didnt edit event')
+    },
   });
 },
 
