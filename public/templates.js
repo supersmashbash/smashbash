@@ -8,6 +8,7 @@ var templates = {};
     "<h6 id = 'event-date'> <%= date %> </h6>",
     "<h6 id = 'event-descrip'> <%= description %> </h6>",
     "<button id='attending-button'> ATTEND </button>",
+    "<button id='delete-button'> DELETE </button>",
   ].join("");
 
   templates.savedEvents = [

@@ -70,6 +70,16 @@ margin-right: 44px;
   }
   #attending-button {
     margin: 0;
+    margin-left: 5%;
+    display: inline-block;
+    background-color: #848381;
+    padding: 8px;
+    color: white;
+    cursor: pointer;
+  }
+  #delete-button {
+    margin: 0;
+    margin-left: 20%;
     display: inline-block;
     background-color: #848381;
     padding: 8px;

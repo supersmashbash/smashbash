@@ -13,7 +13,8 @@ var page = {
     events: "/events",
     createEvent: "/createEvent",
     myEvents: "/accountEventsCreated",
-    savedEvents: "/accountEventsAttending"
+    savedEvents: "/accountEventsAttending",
+    deleteEvent: "/deleteEvent"
   },
   init: function(){
     page.styling();
@@ -252,6 +253,20 @@ getMySavedEvents: function (){
     },
     error: function (err) {
       console.log("DID NOT RECEIVE EVENTS", err);
+    }
+  });
+},
+
+// delete Events
+deleteMySavedEvents: function(){
+  $.ajax({
+    method: 'POST',
+    url: page.url.deleteEvent,
+    success: function(eventInfo){
+      page.getMySavedEvents();
+    },
+    error: function(err){
+      console.log("Did not delete event", err);
     }
   });
 },
