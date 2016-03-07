@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Home</title>
     <link rel="stylesheet" href="normalize.css" media="screen" title="no title" charset="utf-8">
+    <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,700,600' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/styles.css" media="screen" title="no title" charset="utf-8">
 </head>
 <body>
@@ -15,11 +16,12 @@
 
     <form class="create-user-form">
       <input type="text" name="create-user-login" value="" placeholder="username">
-      <input type="text" name="create-user-password" value="" placeholder="password">
+      <input type="password" name="create-user-password" value="" placeholder="password">
       <input type="button" name="create-button" value="sign in" class = "create-button">
     </form>
 
   </nav>
+      <h2 id="upcoming-events">Upcoming Events: </h2>
   <div class="event-container">
 
   </div>
@@ -35,8 +37,9 @@
       <input type="button" name="sign-out-button" value="sign-out" class="sign-out-button">
     </div>
   </nav>
+  <h2 id="welcome-message">Hello, </h2>
   <div class="event-container">
-          <h2 id="welcome-message">Hello, </h2>
+
   </div>
 </section>
 
@@ -44,11 +47,14 @@
 <section class= "user-events-container inactive">
   <nav>
     <h1>smashbash</h1>
-    <input type="button" name="back-button" value="back" class="back-button-user">
-    <input type="button" name="sign-out-button" value="sign-out" class="sign-out-button">
-  </nav>
+    <div class="user-events-nav-container">
+      <input type="button" name="back-button" value="back" class="back-button-user">
+      <input type="button" name="sign-out-button" value="sign-out" class="sign-out-button">
+    </nav>
+    </div>
+
   <div class="my-events-container">
-    <h1>Saved Events:</h1>
+    <h1>Events you are attending:</h1>
 
     <div class="saved-events">
 
@@ -66,11 +72,12 @@
 <section class="post-event-container inactive">
   <nav>
     <h1>smashbash</h1>
-
+    <div class="user-events-nav-container">
     <input type="button" name="back-button" value="back" class="back-button-post">
     <input type="button" name="sign-out-button" value="sign-out" class="sign-out-button">
+    </div>
   </nav>
-  <h1>Post New Events</h1>
+  <h2>Post New Events</h1>
   <form class="create-event-form">
       <input type="text" name="eventName" value="" placeholder="Enter Event Name">
       <input type="text" name="eventLocation" value="" placeholder="Enter Location">

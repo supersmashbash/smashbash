@@ -1,14 +1,14 @@
 var templates = {};
   templates.events = [
-    "<div class = 'my-event' data-id = '<%= id %>'>", //REMOVE THE UNDERSCORE ON ID WHEN USING ROUTES
+    "<div class = 'my-event' data-id = '<%= userName%>'>", //REMOVE THE UNDERSCORE ON ID WHEN USING ROUTES
     "<img src = '<%= image %>'>",
     "<h6 id = 'event-name'> <%= name %> </h6>",
     "<h6 id = 'event-location'> <%= location %> </h6>",
     "<h6 id = 'event-time'> <%= time %> </h6>",
     "<h6 id = 'event-date'> <%= date %> </h6>",
     "<h6 id = 'event-descrip'> <%= description %> </h6>",
-    "<button id='attending-button'> ATTEND </button>",
-    "<button id='delete-button'> DELETE </button>",
+    "<button data-id = '<%= id %>'id='attending-button'> ATTEND </button>",
+    "<button data-id = '<%= id %>' id='delete-button'> DELETE </button>",
   ].join("");
 
   templates.savedEvents = [

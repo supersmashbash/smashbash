@@ -12,16 +12,20 @@ var page = {
     logout: "/logout",
     events: "/events",
     createEvent: "/createEvent",
+    addEvent: "/addEventAttending",
     myEvents: "/accountEventsCreated",
     savedEvents: "/accountEventsAttending",
-    deleteEvent: "/deleteEvent"
+    delete:"/deleteEvent"
   },
   init: function(){
     page.styling();
     page.events();
   },
   styling: function(){
-    page.getAllStoredEvents();
+    // page.getAllStoredEvents();
+setInterval(function(){page.getAllStoredEvents();}, 1000);
+setInterval(function(){page.getMySavedEvents();}, 1000);
+setInterval(function(){page.getMyStoredEvents();}, 1000);
   },
   events: function() {
     $('.create-button').on('click', page.storingUserName);
@@ -31,10 +35,11 @@ var page = {
     $('.my-events-button').on('click', page.getMyStoredEvents); //showing 'my created events
     $('.my-events-button').on('click', page.getMySavedEvents); //showing 'my saved events
     $('.event-container').on('click', '#attending-button', page.saveEvent); // saving attending events
+    $('.event-container').on('click', '#delete-button', page.deleteEvent); // deleting
+    $('.created-events').on('click', '#delete-button', page.deleteEvent); // deleting
     $('.back-button-user').on('click', page.backButtonUser);
     $('.back-button-post').on('click', page.backButtonPost);
     $('.sign-out-button').on('click', ($.post(page.url.logout)) && page.signOutButton);
-    $('#attending-button').on('click', page.storeSavedEvents);
   },
 
   //CREATE USERNAME AND PASSWORD
@@ -59,7 +64,9 @@ var page = {
     else {
       page.hideLoginPage();
       page.addNewUserPassToServer(page.getPasswordToStorage());
-      $("#welcome-message").append(page.getUserFromDom());
+      $("#welcome-message").html("Welcome " + page.getUserFromDom());
+      $('input[name="create-user-login"]').val('');
+      $('input[name="create-user-password"]').val('');
     }
   },
 
@@ -176,29 +183,19 @@ var page = {
     });
   },
 
-//SAVING EVENTS
-saveEvent: function (event) {
-  event.preventDefault();
-  var id = ($(this).data('id'));
-  var filteredEvents = allData.filter(function (el) {
-    return id === el.id;
-    });
-  },
-  // console.log (filteredEvents);
-  storeSavedEvents: function (eventInfo) {
-    $.ajax ({
-      method: 'POST',
-      url: page.url.savedEvents,
-      data: eventInfo,
-      success: function (filteredEvents) {
-        console.log ("SUCCESS");
-      },
-      error: function (err) {
-        console.log ("creating event not working", err);
-      },
-    });
-  },
-
+    getMySavedEvents: function (){
+      $.ajax ({
+        method: 'GET',
+        url: page.url.savedEvents,
+        success: function (eventInfo) {
+          var eventI = JSON.parse(eventInfo);
+          page.addEventsToDom(eventI, $('.saved-events'), templates.savedEvents);
+        },
+        error: function (err) {
+          console.log("DID NOT RECEIVE EVENTS", err);
+        }
+      });
+    },
 
 //STORING AND DISPLAYING EVENTS
 
@@ -242,34 +239,45 @@ getMyStoredEvents: function (){
   });
 },
 
-//Saved Events
-getMySavedEvents: function (){
-  $.ajax ({
-    method: 'GET',
-    url: page.url.savedEvents,
-    success: function (eventInfo) {
-      var eventI = JSON.parse(eventInfo);
-      page.addEventsToDom(eventI, $('.saved-events'), templates.savedEvents);
-    },
-    error: function (err) {
-      console.log("DID NOT RECEIVE EVENTS", err);
-    }
-  });
+
+//DELETING EVENTS
+
+deleteEvent: function () {
+  event.preventDefault();
+  var eventId = ($(this).data('id'));
+  console.log (eventId);
+  page.deleteEventFromStorage (eventId);
 },
 
-// delete Events
-deleteMySavedEvents: function(){
+deleteEventFromStorage: function (eventId){
   $.ajax({
-    method: 'POST',
-    url: page.url.deleteEvent,
-    success: function(eventInfo){
-      page.getMySavedEvents();
-    },
-    error: function(err){
-      console.log("Did not delete event", err);
+    method:'POST',
+    url: page.url.delete,
+    data: {eventId: eventId},
+    success: function () {
+          console.log ('deleted event');
     }
   });
 },
 
+//SAVING EVENTS
+
+saveEvent: function () {
+  event.preventDefault();
+  var eventId = ($(this).data('id'));
+  console.log (eventId);
+  page.saveEventInStorage(eventId);
+},
+
+saveEventInStorage: function (eventId) {
+  $.ajax({
+    method:'POST',
+    url: page.url.addEvent,
+    data: {eventId: eventId},
+    success: function () {
+          console.log ('saved event');
+    }
+  });
+},
 
 }; //end of page init

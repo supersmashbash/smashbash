@@ -3,19 +3,22 @@
 }
 
 body {
-  background-color: #E9EAEA;
+  background-color:#f2f2f2;
+  font-family: 'Raleway', sans-serif;
 }
 
 nav {
-  background-color: #36414A;
-  height: 65px;
+  background: linear-gradient(45deg, #F75E55, #F0B67F);
+  height: 83px;
   color: #E9EAEA;
+  padding-top: 16px;
   h1 {
     display: inline-block;
     float: left;
     margin: 0;
     margin-left: 25px;
     margin-top: 10px;
+    color: white;
   }
   form  {
     float: right;
@@ -24,8 +27,21 @@ nav {
   }
 }
 
+#upcoming-events {
+  background-color: white;
+  width: 75%;
+  margin: 0 auto;
+  padding: 45px;
+}
+#welcome-message {
+  background-color: white;
+  width: 75%;
+  margin: 0 auto;
+  padding: 45px;
+}
+
 .event-container {
-  background-color: #C8C6B9;
+  background-color: white;
   width: 75%;
   margin: 0 auto;
   padding: 45px;
@@ -68,6 +84,15 @@ margin-right: 44px;
     font-size: 1em;
     margin: 0;
   }
+  #event-time {
+    margin: 0;
+  }
+  #event-date {
+    margin: 0;
+  }
+  #event-descrip {
+    margin: 0;
+  }
   #attending-button {
     margin: 0;
     margin-left: 5%;
@@ -102,6 +127,9 @@ margin-right: 44px;
 // hiding 'attend' button on login pag
 .login-page {
   #attending-button {
+    display: none;
+  }
+  #delete-button {
     display: none;
   }
 }

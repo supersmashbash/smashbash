@@ -2,30 +2,66 @@
   display: none; }
 
 body {
-  background-color: #E9EAEA; }
+  background-color: #f2f2f2;
+  font-family: 'Raleway', sans-serif; }
 
 nav {
-  background-color: #36414A;
-  height: 65px;
-  color: #E9EAEA; }
-  nav h1 {
-    display: inline-block;
-    float: left;
-    margin: 0;
-    margin-left: 25px;
-    margin-top: 10px; }
-  nav form {
-    float: right;
-    margin-right: 30px;
-    margin-top: 19px; }
+  background: linear-gradient(45deg, #F75E55, #F0B67F);
+  height: 83px;
+  color: #E9EAEA;
+  padding-top: 16px;
+  -webkit-box-shadow: 0px 3px 5px 0px rgba(0,0,0,0.28);
+  -moz-box-shadow: 0px 3px 5px 0px rgba(0,0,0,0.28);
+  box-shadow: 0px 3px 5px 0px rgba(0,0,0,0.28);
+  z-index: 1;
+  position: fixed;
+  width: 100%;
+ }
 
-.event-container {
-  background-color: #C8C6B9;
+nav h1 {
+  display: inline-block;
+  float: left;
+  margin: 0;
+  font-size: 2.5em;
+  margin-left: 25px;
+  margin-top: 6px;
+  color: white; }
+
+nav form {
+  float: right;
+  margin-right: 30px;
+  margin-top: 19px; }
+
+#upcoming-events {
+  background-color: white;
   width: 75%;
   margin: 0 auto;
-  padding: 45px; }
-  .event-container h2 {
-    margin: 0; }
+  padding: 45px;
+  padding-top: 143px;
+  color: grey;
+}
+
+#welcome-message {
+  background-color: white;
+  width: 75%;
+  margin: 0 auto;
+  padding: 45px;
+  padding-top: 143px;
+  color: grey;
+ }
+
+.event-container {
+  background-color: white;
+  width: 75%;
+  margin: 0 auto;
+  padding: 45px;
+  padding-top: 0px;
+ }
+.event-container #delete-button {
+  display: none;
+}
+.event-container h2 {
+  margin: 0; }
 
 .user-page .user-button-container {
   display: inline-block;
@@ -35,10 +71,16 @@ nav {
 
 .create-event-form {
   width: 35%;
-  margin: 0 auto; }
-  .create-event-form input[type="text"] {
-    display: block;
-    width: 100%; }
+  margin: 0 auto;
+  margin-top: 150px;
+  background: white;
+  padding: 36px;
+}
+}
+
+.create-event-form input[type="text"] {
+  display: block;
+  width: 100%; }
 
 .my-event {
   display: inline-block;
@@ -46,43 +88,74 @@ nav {
   padding: 15px;
   vertical-align: top;
   width: 27%;
-  margin-right: 44px; }
-  .my-event img {
-    width: 100%; }
-  .my-event #event-name {
-    font-size: 1.5em;
-    margin: 0; }
-  .my-event #event-location {
-    font-size: 1em;
-    margin: 0; }
-  .my-event #attending-button {
-    margin: 0;
-    margin-left: 5%;
-    display: inline-block;
-    background-color: #848381;
-    padding: 8px;
-    color: white;
-    cursor: pointer; }
-  .my-event #delete-button {
-    margin: 0;
-    margin-left: 20%;
-    display: inline-block;
-    background-color: #848381;
-    padding: 8px;
-    color: white;
-    cursor: pointer; }
+  margin-right: 44px;
+  margin-bottom: 50px;
+  -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+ }
+
+.my-event img {
+  width: 100%; }
+
+.my-event #event-name {
+  font-size: 1.5em;
+  margin: 0; }
+
+.my-event #event-location {
+  font-size: 1em;
+  margin: 0; }
+
+.my-event #event-time {
+  margin: 0; }
+
+.my-event #event-date {
+  margin: 0; }
+
+.my-event #event-descrip {
+  margin: 0; }
+
+.my-event #attending-button {
+  margin: 0;
+  display: inline-block;
+  background-color: #848381;
+  padding: 8px;
+  color: white;
+  cursor: pointer; }
 
 .my-event:nth-child(3n+3) {
   margin-right: 0; }
 
 .my-events-container {
-  background-color: #C8C6B9;
+  background-color: white;
   width: 75%;
   margin: 0 auto;
-  padding: 45px; }
+  padding: 45px;
+  padding-top: 103px;
+  color: grey;
+ }
 
 .login-page #attending-button {
   display: none; }
+
+.login-page #delete-button {
+  display: none; }
+
+.user-events-nav-container {
+  float: right;
+  margin-right: 25px;
+  margin-top: 21px;
+}
+
+.post-event-container h1 {
+  margin: 0;
+  margin-left: 25px;
+  margin-top: 6px;
+}
+
+.post-event-container h2 {
+  margin: 0;
+}
 
 footer {
   background-color: lightgrey;
