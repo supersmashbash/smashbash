@@ -101,6 +101,14 @@ margin-right: 44px;
     color: white;
     cursor: pointer;
   }
+  #delete-button {
+    margin: 0;
+    display: inline-block;
+    background-color: #848381;
+    padding: 8px;
+    color: white;
+    cursor: pointer;
+  }
 }
 .my-event:nth-child(3n+3) {
   margin-right: 0;
@@ -120,6 +128,9 @@ margin-right: 44px;
     display: none;
   }
   #delete-button {
+    display: none;
+  }
+  #edit-button {
     display: none;
   }
 }
