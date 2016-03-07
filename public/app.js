@@ -67,7 +67,7 @@ setInterval(function(){page.getMyStoredEvents();}, 1000);
     else {
       page.hideLoginPage();
       page.addNewUserPassToServer(page.getPasswordToStorage());
-      $("#welcome-message").html("Welcome " + page.getUserFromDom());
+      $("#welcome-message").html("Welcome " + page.getUserFromDom() + "!");
       $('input[name="create-user-login"]').val('');
       $('input[name="create-user-password"]').val('');
     }
@@ -173,6 +173,7 @@ setInterval(function(){page.getMyStoredEvents();}, 1000);
       image: img,
       description: descrip,
     };
+
   },
   storeEvent: function (eventInfo) {
     $.ajax ({
@@ -181,6 +182,12 @@ setInterval(function(){page.getMyStoredEvents();}, 1000);
       data: eventInfo,
       success: function (eventInfo) {
         console.log ("CREATED EVENT" + eventInfo);
+        $('input[name="eventName"]').val("");
+        $('input[name="eventLocation"]').val("");
+        $('input[name="timeOfEvent"]').val("");
+        $('input[name="dateOfEvent"]').val("");
+        $('input[name="descripOfEvent"]').val("");
+        $('input[name="imgOfEvent"]').val("");
       },
       error: function (err) {
         console.log ("creating event not working", err);
@@ -330,7 +337,7 @@ updateEvent: function (editedEvent){
       console.log ('edit event');
     },
     error: function (err){
-      console.log ('it didnt edit event')
+      console.log ('it didnt edit event');
     },
   });
 },

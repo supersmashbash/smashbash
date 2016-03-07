@@ -4,7 +4,7 @@ var templates = {};
     "<img src = '<%= image %>'>",
     "<h6 id = 'event-name'> <%= name %> </h6>",
     "<h6 id = 'event-location'> <%= location %> </h6>",
-    "<h6 id = 'event-time'> <%= time %> </h6>",
+    "<h6 id = 'event-time'> <%= time %>  |  </h6>",
     "<h6 id = 'event-date'> <%= date %> </h6>",
     "<h6 id = 'event-descrip'> <%= description %> </h6>",
     "<button data-id = '<%= id %>'id='attending-button'> ATTEND </button>",
