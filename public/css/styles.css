@@ -90,6 +90,13 @@ nav {
     padding: 8px;
     color: white;
     cursor: pointer; }
+  .my-event #edit-button {
+    margin: 0;
+    display: inline-block;
+    background-color: #848381;
+    padding: 8px;
+    color: white;
+    cursor: pointer; }
 
 .my-event:nth-child(3n+3) {
   margin-right: 0; }
@@ -107,6 +114,12 @@ nav {
   display: none; }
 
 .login-page #edit-button {
+  display: none; }
+
+.user-page #delete-button {
+  display: none; }
+
+.user-page #edit-button {
   display: none; }
 
 footer {

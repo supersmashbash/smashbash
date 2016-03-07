@@ -39,7 +39,7 @@ setInterval(function(){page.getMyStoredEvents();}, 1000);
     $('.event-container').on('click', '#attending-button', page.saveEvent); // saving attending events
     $('.event-container').on('click', '#delete-button', page.deleteEvent); // deleting
     $('.created-events').on('click', '#delete-button', page.deleteEvent); // deleting
-    // $('.created-events').on('click', '#edit-button', page.hideUserPageAgain);
+    $('.event-container').on('click', '#edit-button', page.hideUserPageAgain);
     $('.back-button-user').on('click', page.backButtonUser);
     $('.back-button-post').on('click', page.backButtonPost);
     $('.sign-out-button').on('click', ($.post(page.url.logout)) && page.signOutButton);
